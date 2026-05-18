@@ -1,0 +1,12 @@
+<div class="ofertas-container">
+  <h2>Ofertas de Empleo</h2>
+
+  <div *ngIf="ofertas.length === 0">
+    <p>Cargando ofertas...</p>
+  </div>
+
+  <div class="oferta-card" *ngFor="let oferta of ofertas">
+    <h3>{{ oferta.titulo }}</h3>
+    <p>{{ oferta.descripcion }}</p>
+  </div>
+</div>
