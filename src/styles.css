@@ -1,1 +1,77 @@
-/* You can add global styles to this file, and also import other style files */
+/* ===== VARIABLES DE COLOR ===== */
+:root {
+  --azul: #554DEF;
+  --gris-fondo: #ECEDF4;
+  --gris-claro: #f8f8fb;
+}
+
+/* ===== TIPOGRAFÍA ===== */
+.titulos {
+  font-family: 'Jua', sans-serif;
+  font-size: 2.2rem;
+  color: #1f2333;
+}
+
+.subtitulos {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.subtexto {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+}
+
+.fuente-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+.text-azul {
+  color: #554DEF;
+}
+
+/* ===== FONDO ===== */
+.bg-gris {
+  background-color: #f3f4f6;
+}
+
+/* ===== BOTONES ===== */
+.boton-primario-grande {
+  background-color: #554DEF;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.boton-primario-grande:hover {
+  background-color: #4338ca;
+  color: white;
+}
+
+/* ===== FOOTER ===== */
+.titulo-seccion {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  color: #1f2333;
+}
+
+.lista-footer {
+  list-style: none;
+  padding: 0;
+  color: #6b7280;
+  font-family: 'Inter', sans-serif;
+}
+
+.lista-footer li {
+  margin-bottom: 0.5rem;
+}
+
+.texto-mini {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  font-family: 'Inter', sans-serif;
+}
