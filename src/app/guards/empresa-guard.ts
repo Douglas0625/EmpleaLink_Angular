@@ -1,5 +1,13 @@
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 
-export const empresaGuard: CanActivateFn = (route, state) => {
-  return true;
+export const empresaGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  if (auth.getRol() === 'company') return true;
+
+  router.navigate(['/login']);
+  return false;
 };
