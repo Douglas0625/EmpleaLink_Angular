@@ -38,4 +38,13 @@ export class AdminService {
   postResource(data: any): Observable<any> {
     return this.http.post(`${API_URL}/resources`, data);
   }
+  getComments(): Observable<any> {
+    return this.http.get(`${API_URL}/forum/comments`);
+  }
+  getPosts(): Observable<any> {
+    return this.http.get(`${API_URL}/forum/posts`);
+  }
+  deleteReport(reportId: number): Observable<any> {
+    return this.http.delete(`${API_URL}/forum/reports/${reportId}`);
+  }
 }
