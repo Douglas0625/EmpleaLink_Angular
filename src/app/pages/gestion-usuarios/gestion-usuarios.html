@@ -1,0 +1,163 @@
+<div>
+
+  <!-- HERO -->
+  <section class="pb-5" style="background-color: #ECEDF4">
+    <div class="container d-flex flex-column align-items-start gap-3 py-4">
+      <a routerLink="/dashboard-admin" class="fw-bold nav-link" style="color:#554DEF;">
+        <small><i class="bi bi-arrow-left"></i> Volver al Dashboard</small>
+      </a>
+    </div>
+
+    <div class="container d-flex pb-5 justify-content-between align-items-end gap-5">
+      <div>
+        <h1 class="titulos">Gestion de <span class="text-azul">Usuarios</span></h1>
+        <p class="subtitulos fuente-inter">Visualiza el listado completo y gestiona la integridad del portal.</p>
+      </div>
+    </div>
+
+    <!-- BUSCADOR -->
+    <div class="container">
+      <div class="d-flex justify-content-between my-5 p-3 rounded-4" style="background-color:white;">
+        <div class="d-flex" role="search">
+          <button class="btn" (click)="aplicarFiltros()">
+            <i class="bi bi-search"></i>
+          </button>
+          <input class="form-control me-2 rounded-5" style="width:650px;"
+                 type="search"
+                 placeholder="Buscar por nombre o email..."
+                 [(ngModel)]="textoBusqueda"
+                 (ngModelChange)="aplicarFiltros()"
+                 (keyup.enter)="aplicarFiltros()">
+        </div>
+        <div class="d-flex px-5 gap-5 align-items-start">
+          <div class="mb-3">
+            <select class="form-select rounded-4" style="height:50px;"
+                    [(ngModel)]="estadoFiltro"
+                    (change)="aplicarFiltros()">
+              <option>estado de usuario</option>
+              <option>Activo</option>
+              <option>Bloqueado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARDS DE USUARIOS -->
+    <div class="container my-5" style="font-family:sans-serif;">
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border" style="color:#554DEF;"></div>
+        <p class="mt-2 text-secondary">Cargando usuarios...</p>
+      </div>
+
+      <!-- Sin resultados -->
+      <div *ngIf="!loading && usuariosFiltrados.length === 0" class="text-center py-5">
+        <p class="text-secondary">No se encontraron usuarios.</p>
+      </div>
+
+      <!-- Grid -->
+      <div class="row gap-4" *ngIf="!loading">
+        <div *ngFor="let u of usuariosFiltrados"
+             class="card border-0 rounded-4 p-4 col-auto"
+             style="width:420px; background:#f8f8fb;">
+
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="d-flex align-items-center gap-3">
+              <!-- Avatar con iniciales -->
+              <div class="rounded-3 d-flex justify-content-center align-items-center fw-bold fs-4"
+                   style="width:55px;height:55px;background:rgba(85,77,239,0.1);color:#554DEF;flex-shrink:0;">
+                {{ u.iniciales }}
+              </div>
+              <div>
+                <h5 class="mb-1 fw-bold">{{ u.nombre }}</h5>
+                <p class="mb-0 text-secondary">{{ u.profesion }}</p>
+              </div>
+            </div>
+            <span class="badge rounded-pill px-3 py-2"
+                  [style.background]="u.is_blocked ? '#EF4444' : '#22C55E'">
+              {{ u.is_blocked ? 'Bloqueado' : 'Activo' }}
+            </span>
+          </div>
+
+          <div class="mt-4">
+            <small class="text-uppercase fw-bold">Contacto</small>
+            <p class="mb-0 mt-2">{{ u.email }}</p>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="d-flex gap-3">
+            <button class="btn flex-fill rounded-4 py-3 fw-bold"
+                    style="background:#ececff;color:#554DEF;border:1px solid #c7c7ff;"
+                    (click)="verPerfil(u.user_id)">
+              <i class="bi bi-eye me-2"></i>Ver Perfil
+            </button>
+            <button class="btn flex-fill rounded-4 py-3 fw-bold text-secondary border-0"
+                    (click)="bloquearUsuario(u)">
+              <i class="bi bi-lock me-2"></i>
+              {{ u.is_blocked ? 'Desbloquear' : 'Bloquear' }}
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-top">
+    <div class="container py-5">
+      <div class="row mb-4 gap-4 py-2">
+        <div class="col-lg-4 col-md-12">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="fw-bold fs-4" style="color:#554DEF;">EmpleaLink</span>
+          </div>
+          <p class="subtexto" style="font-size:14px;">
+            Transformamos el futuro laboral conectando el talento adecuado con el lugar perfecto.
+          </p>
+          <div class="d-flex gap-3 mt-4">
+            <span class="d-flex align-items-center justify-content-center"
+                  style="width:32px;height:32px;border-radius:50%;background:#ECEDF4;">
+              <i class="bi bi-facebook" style="font-size:14px;color:#1f2333;"></i>
+            </span>
+            <span class="d-flex align-items-center justify-content-center"
+                  style="width:32px;height:32px;border-radius:50%;background:#ECEDF4;">
+              <i class="bi bi-twitter" style="font-size:14px;color:#1f2333;"></i>
+            </span>
+            <span class="d-flex align-items-center justify-content-center"
+                  style="width:32px;height:32px;border-radius:50%;background:#ECEDF4;">
+              <i class="bi bi-instagram" style="font-size:14px;color:#1f2333;"></i>
+            </span>
+            <span class="d-flex align-items-center justify-content-center"
+                  style="width:32px;height:32px;border-radius:50%;background:#ECEDF4;">
+              <i class="bi bi-linkedin" style="font-size:14px;color:#1f2333;"></i>
+            </span>
+          </div>
+        </div>
+        <div class="col">
+          <h6 class="titulo-seccion mb-3" style="font-size:16px;">Para Candidatos</h6>
+          <ul class="lista-footer" style="font-size:14px;">
+            <li>Explorar Empleos</li>
+            <li>Subir mi CV</li>
+            <li>Consejos de Carrera</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h6 class="titulo-seccion mb-3" style="font-size:16px;">Para Empresas</h6>
+          <ul class="lista-footer" style="font-size:14px;">
+            <li>Publicar Vacante</li>
+            <li>Crear perfil</li>
+          </ul>
+        </div>
+      </div>
+      <hr style="border-color:#ecedf4;margin-top:30px;margin-bottom:20px;">
+      <div class="d-flex justify-content-between flex-wrap texto-mini">
+        <span>© 2026 EmpleaLink. Todos los derechos reservados.</span>
+        <span>Hecho con ❤ para tu futuro</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
