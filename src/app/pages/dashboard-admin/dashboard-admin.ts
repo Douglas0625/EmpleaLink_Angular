@@ -7,6 +7,7 @@ import { AdminService } from '../../services/admin';
 
 @Component({
   selector: 'app-dashboard-admin',
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './dashboard-admin.html',
   styleUrl: './dashboard-admin.css'
