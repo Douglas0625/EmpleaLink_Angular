@@ -10,6 +10,9 @@ import { PerfilUsuario } from './pages/perfil-usuario/perfil-usuario';
 import { PerfilEmpresa } from './pages/perfil-empresa/perfil-empresa';
 import { Postulaciones } from './pages/postulaciones/postulaciones';
 import { Foro } from './pages/foro/foro';
+import { GestionUsuarios } from './pages/gestion-usuarios/gestion-usuarios';
+import { GestionEmpresas } from './pages/gestion-empresas/gestion-empresas';
+import { GestionVacantes } from './pages/gestion-vacantes/gestion-vacantes';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -24,5 +27,8 @@ export const routes: Routes = [
   { path: 'perfil-empresa', component: PerfilEmpresa },
   { path: 'postulaciones', component: Postulaciones },
   { path: 'foro', component: Foro },
+  { path: 'gestion-usuarios', component: GestionUsuarios },
+  { path: 'gestion-empresas', component: GestionEmpresas },
+  { path: 'gestion-vacantes', component: GestionVacantes },
   { path: '**', redirectTo: 'login' }
 ];

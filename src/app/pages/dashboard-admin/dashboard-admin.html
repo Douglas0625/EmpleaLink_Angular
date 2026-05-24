@@ -137,9 +137,11 @@
               </div>
               <p class="ps-3 subtitulos">Candidatos registrados recientemente</p>
             </div>
-            <button class="btn rounded-4 fw-bold" style="max-height:40px;background-color:#ECEDF4;">
-              Ver todos
-            </button>
+            <a routerLink="/gestion-usuarios">
+                <button class="btn rounded-4 fw-bold" style="max-height:40px;background-color:#ECEDF4;">
+                  Ver todos
+                </button>
+            </a>
           </div>
           <div class="table-responsive">
             <table class="table align-middle mb-0">
@@ -201,9 +203,11 @@
               </div>
               <p class="ps-3 subtitulos">Empresas y reclutadores registrados</p>
             </div>
-            <button class="btn rounded-4 fw-bold" style="max-height:40px;background-color:#ECEDF4;">
-              Ver todas
-            </button>
+            <a routerLink="/gestion-empresas">
+                <button class="btn rounded-4 fw-bold" style="max-height:40px;background-color:#ECEDF4;">
+                  Ver todas
+                </button>
+            </a>
           </div>
           <div class="table-responsive">
             <table class="table align-middle mb-0">
@@ -254,9 +258,11 @@
               </div>
               <p class="ps-3 subtitulos">Últimas ofertas publicadas en el portal</p>
             </div>
-            <button class="btn rounded-4 fw-bold" style="max-height:40px;background-color:#ECEDF4;">
-              Ver todas
-            </button>
+            <a routerLink="/gestion-vacantes">
+                <button class="btn rounded-4 fw-bold" style="max-height:40px;background-color:#ECEDF4;">
+                  Ver todas
+                </button>
+            </a>
           </div>
           <div class="gap-3 d-flex flex-column">
             <div *ngFor="let v of vacantesTabla"
