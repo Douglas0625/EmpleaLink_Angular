@@ -1,5 +1,13 @@
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 
-export const usuarioGuard: CanActivateFn = (route, state) => {
-  return true;
+export const candidatoGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  if (auth.getRol() === 'candidate') return true;
+
+  router.navigate(['/login']);
+  return false;
 };

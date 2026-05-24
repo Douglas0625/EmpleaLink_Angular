@@ -1,1 +1,216 @@
-<p>login works!</p>
+<!-- Navbar mínima (sin sesión) -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <div class="nav-gap d-flex">
+      <a class="navbar-brand" routerLink="/">
+        <img src="media/Frame.svg" alt="EmpleaLink" width="150" height="40">
+      </a>
+    </div>
+    <div class="nav-botones d-flex">
+      <a routerLink="/" class="boton-secundario text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Volver al inicio
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Sección principal -->
+<section class="py-5 bg-gris">
+  <div class="container py-4">
+    <div class="row align-items-center justify-content-center g-4">
+
+      <!-- Panel izquierdo informativo -->
+      <div class="col-lg-6">
+        <div class="panel-auth-info">
+          <span class="auth-badge">TU FUTURO PROFESIONAL COMIENZA HOY</span>
+
+          <h1 class="titulo-grande auth-titulo mt-4 mb-3">
+            Impulsa tu <span class="text-azul">carrera</span> con EmpleaLink
+          </h1>
+
+          <p class="subtitulos fuente-inter mb-4">
+            Accede a oportunidades laborales, recursos para tu carrera y una plataforma
+            pensada para conectar talento con empresas.
+          </p>
+
+          <div class="d-flex flex-column gap-3">
+            <div class="auth-beneficio">
+              <span class="auth-icono"><i class="bi bi-check2-circle"></i></span>
+              <p class="lista-fuente mb-0">Explora vacantes según tu perfil e intereses.</p>
+            </div>
+            <div class="auth-beneficio">
+              <span class="auth-icono"><i class="bi bi-check2-circle"></i></span>
+              <p class="lista-fuente mb-0">Crea tu perfil profesional y postúlate fácilmente.</p>
+            </div>
+            <div class="auth-beneficio">
+              <span class="auth-icono"><i class="bi bi-check2-circle"></i></span>
+              <p class="lista-fuente mb-0">Descubre recursos, noticias y valoraciones de empresas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de autenticación -->
+      <div class="col-lg-5">
+        <div class="auth-card bg-white cards-container">
+
+          <h1 class="titulos text-azul text-center">¡Bienvenidos!</h1>
+          <p class="subtitulos fuente-inter text-center">Inicia sesión o crea una cuenta gratuita.</p>
+
+          <!-- Tabs principales -->
+          <div class="auth-tabs d-flex mb-4">
+            <button class="auth-tab-boton w-50"
+              [class.active]="tabActivo === 'login'"
+              (click)="irALogin()" type="button">
+              Iniciar sesión
+            </button>
+            <button class="auth-tab-boton w-50"
+              [class.active]="tabActivo === 'registro'"
+              (click)="irARegistro()" type="button">
+              Registrarse
+            </button>
+          </div>
+
+          <!-- ── TAB LOGIN ── -->
+          <div *ngIf="tabActivo === 'login'">
+            <form [formGroup]="formLogin" (ngSubmit)="onLogin()">
+              <div class="mb-3">
+                <label class="texto-etiqueta mb-2">Correo electrónico</label>
+                <input type="email" class="form-control input-auth"
+                  formControlName="email" placeholder="ejemplo@correo.com">
+              </div>
+              <div class="mb-3">
+                <label class="texto-etiqueta mb-2">Contraseña</label>
+                <input type="password" class="form-control input-auth"
+                  formControlName="password" placeholder="********">
+              </div>
+
+              <button type="submit" class="boton-primario w-100 my-3" [disabled]="cargando">
+                <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
+                Entrar
+              </button>
+
+              <p *ngIf="mensajeLogin" class="texto-mini text-center text-danger mb-2">
+                {{ mensajeLogin }}
+              </p>
+
+              <p class="texto-mini text-center mb-0">
+                ¿Aún no tienes cuenta?
+                <button class="auth-link-boton" type="button" (click)="irARegistro()">
+                  Regístrate aquí
+                </button>
+              </p>
+            </form>
+          </div>
+
+          <!-- ── TAB REGISTRO ── -->
+          <div *ngIf="tabActivo === 'registro'">
+
+            <!-- Tabs secundarios -->
+            <div class="auth-tabs-secundario d-flex mb-4">
+              <button class="auth-tab-boton"
+                [class.active]="tipoRegistro === 'candidato'"
+                (click)="tipoRegistro = 'candidato'" type="button">
+                Usuario Candidato
+              </button>
+              <button class="auth-tab-boton"
+                [class.active]="tipoRegistro === 'empresa'"
+                (click)="tipoRegistro = 'empresa'" type="button">
+                Cuenta de Empresa
+              </button>
+            </div>
+
+            <!-- Registro Candidato -->
+            <div *ngIf="tipoRegistro === 'candidato'">
+              <form [formGroup]="formCandidato" (ngSubmit)="onRegistroCandidato()">
+                <div class="mb-3">
+                  <label class="texto-etiqueta mb-2">Nombre</label>
+                  <input type="text" class="form-control input-auth"
+                    formControlName="nombre" placeholder="Tu nombre">
+                </div>
+                <div class="mb-3">
+                  <label class="texto-etiqueta mb-2">Apellido</label>
+                  <input type="text" class="form-control input-auth"
+                    formControlName="apellido" placeholder="Tu apellido">
+                </div>
+                <div class="mb-3">
+                  <label class="texto-etiqueta mb-2">Correo electrónico</label>
+                  <input type="email" class="form-control input-auth"
+                    formControlName="email" placeholder="ejemplo@correo.com">
+                </div>
+                <div class="mb-3">
+                  <label class="texto-etiqueta mb-2">Contraseña</label>
+                  <input type="password" class="form-control input-auth"
+                    formControlName="password" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="mb-3">
+                  <label class="texto-etiqueta mb-2">Confirmar contraseña</label>
+                  <input type="password" class="form-control input-auth"
+                    formControlName="confirmar" placeholder="Repite tu contraseña">
+                </div>
+
+                <button type="submit" class="boton-primario w-100 my-3" [disabled]="cargando">
+                  <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
+                  Crear cuenta
+                </button>
+
+                <p *ngIf="mensajeCandidato" class="texto-mini text-center mb-2"
+                  [class.text-danger]="!mensajeCandidatoExito"
+                  [class.text-success]="mensajeCandidatoExito">
+                  {{ mensajeCandidato }}
+                </p>
+              </form>
+            </div>
+
+            <!-- Registro Empresa -->
+            <div *ngIf="tipoRegistro === 'empresa'">
+              <form [formGroup]="formEmpresa" (ngSubmit)="onRegistroEmpresa()">
+                <div class="mb-3">
+                  <label class="texto-etiqueta mb-2">Nombre de la empresa</label>
+                  <input type="text" class="form-control input-auth"
+                    formControlName="nombreEmpresa" placeholder="Nombre de tu empresa">
+                </div>
+                <div class="mb-3">
+                  <label class="texto-etiqueta mb-2">Correo electrónico</label>
+                  <input type="email" class="form-control input-auth"
+                    formControlName="email" placeholder="empresa@correo.com">
+                </div>
+                <div class="mb-3">
+                  <label class="texto-etiqueta mb-2">Persona de contacto</label>
+                  <input type="text" class="form-control input-auth"
+                    formControlName="contacto" placeholder="Nombre del responsable">
+                </div>
+                <div class="mb-3">
+                  <label class="texto-etiqueta mb-2">Contraseña</label>
+                  <input type="password" class="form-control input-auth"
+                    formControlName="password" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="mb-3">
+                  <label class="texto-etiqueta mb-2">Confirmar contraseña</label>
+                  <input type="password" class="form-control input-auth"
+                    formControlName="confirmar" placeholder="Repite tu contraseña">
+                </div>
+
+                <button type="submit" class="boton-primario w-100 my-3" [disabled]="cargando">
+                  <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
+                  Registrar empresa
+                </button>
+
+                <p *ngIf="mensajeEmpresa" class="texto-mini text-center mb-2"
+                  [class.text-danger]="!mensajeEmpresaExito"
+                  [class.text-success]="mensajeEmpresaExito">
+                  {{ mensajeEmpresa }}
+                </p>
+              </form>
+            </div>
+
+          </div>
+          <!-- /TAB REGISTRO -->
+
+        </div>
+      </div>
+      <!-- /tarjeta -->
+
+    </div>
+  </div>
+</section>
