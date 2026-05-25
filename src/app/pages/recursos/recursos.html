@@ -1,0 +1,257 @@
+<div>
+  <section class="bg-gris py-5">
+    <div class="container">
+
+      <!-- ENCABEZADO -->
+      <div class="mb-4">
+        <span class="auth-badge">POTENCIA TU CARRERA</span>
+        <h1 class="titulos mt-3 mb-2">
+          Recursos y <span class="text-azul">Valoraciones</span>
+        </h1>
+        <p class="subtitulos fuente-inter mb-0">
+          Descubre consejos expertos para destacar en tu búsqueda laboral y conoce la realidad de las empresas de la mano de sus empleados.
+        </p>
+      </div>
+
+      <!-- BUSCADOR -->
+      <div class="bg-white cards-container mb-4 barra-recursos">
+        <div class="input-group input-buscador-recursos">
+          <span class="input-group-text bg-white border-0">
+            <i class="bi bi-search texto-mini"></i>
+          </span>
+          <input type="text" class="form-control border-0 subtexto"
+                 placeholder="Buscar artículos o guías..."
+                 [(ngModel)]="textoBusqueda"
+                 (ngModelChange)="aplicarFiltros()">
+        </div>
+      </div>
+
+      <!-- LOADING -->
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border" style="color:#554DEF;"></div>
+        <p class="mt-2 text-secondary">Cargando...</p>
+      </div>
+
+      <div class="row g-4" *ngIf="!loading">
+
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="col-lg-8">
+
+          <!-- GRID RECURSOS -->
+          <div class="row g-4 mb-4">
+
+            <div *ngIf="recursosFiltrados.length === 0" class="col-12">
+              <p class="subtexto mb-0">No hay recursos disponibles.</p>
+            </div>
+
+            <div *ngFor="let r of recursosFiltrados" class="col-md-6">
+              <div class="bg-white cards-container recurso-card h-100">
+
+                <!-- Imagen o icono -->
+                <img *ngIf="r.image_url" [src]="r.image_url" [alt]="r.title"
+                     class="img-fluid rounded-4 mb-4"
+                     style="width:100%;height:180px;object-fit:cover;">
+                <div *ngIf="!r.image_url" class="icono-recurso mb-4"
+                     [ngClass]="obtenerClaseColor(r.resource_type)">
+                  <i class="bi" [ngClass]="obtenerIcono(r.resource_type)"></i>
+                </div>
+
+                <h3 class="fuente-inter fw-bold mb-2" style="font-size:18px;">
+                  {{ r.title || 'Recurso' }}
+                </h3>
+                <div class="texto-mini mb-3">
+                  <i class="bi bi-clock"></i> {{ formatearFecha(r.created_at) }}
+                </div>
+                <p class="subtexto mb-4">{{ r.description || 'Sin descripción' }}</p>
+                <a [href]="r.url || '#'" target="_blank" rel="noopener noreferrer"
+                   class="text-decoration-none text-azul subtexto fw-bold">
+                  Leer artículo completo <i class="bi bi-chevron-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- ÚLTIMAS OPINIONES -->
+          <div class="mb-3">
+            <h6 class="texto-mini fw-bold text-uppercase mb-3">Últimas opiniones</h6>
+          </div>
+
+          <div class="d-flex flex-column gap-3">
+            <div *ngIf="opinionesMostradas.length === 0">
+              <p class="subtexto mb-0">Aún no hay opiniones disponibles.</p>
+            </div>
+            <div *ngFor="let op of opinionesMostradas" class="bg-white opinion-card">
+              <div class="d-flex justify-content-between align-items-start gap-3">
+                <div class="d-flex gap-3">
+                  <div class="avatar-opinion">{{ op.iniciales }}</div>
+                  <div>
+                    <div class="fw-bold mb-0" style="font-size:14px;">{{ op.nombreEmpresa }}</div>
+                    <div class="texto-mini mb-3">{{ op.industria }}</div>
+                    <p class="subtexto texto-italico mb-0">"{{ op.comentario }}"</p>
+                  </div>
+                </div>
+                <span class="badge-puntaje">★ {{ op.rating.toFixed(1) }}</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- fin columna izquierda -->
+
+        <!-- COLUMNA DERECHA -->
+        <div class="col-lg-4">
+
+          <!-- FORMULARIO VALORACIÓN -->
+          <div class="bg-white cards-container panel-lateral mb-4">
+            <h3 class="subtitulos fw-bold text-dark mb-1">Deja tu valoración</h3>
+            <p class="subtexto mb-4">Ayuda a otros candidatos compartiendo tu experiencia.</p>
+
+            <div class="mb-3">
+              <label class="texto-mini fw-bold mb-2">Seleccionar Empresa</label>
+              <select class="form-select filtro-recursos subtexto"
+                      [(ngModel)]="empresaSeleccionada">
+                <option value="">Busca la empresa...</option>
+                <option *ngFor="let e of empresasOriginales" [value]="e.id">
+                  {{ e.company_name }}
+                </option>
+              </select>
+            </div>
+
+            <!-- ESTRELLAS -->
+            <div class="rating mb-3">
+              <input type="radio" name="rating" id="star5" [value]="5" [(ngModel)]="ratingSeleccionado">
+              <label for="star5"><i class="bi bi-star-fill"></i></label>
+              <input type="radio" name="rating" id="star4" [value]="4" [(ngModel)]="ratingSeleccionado">
+              <label for="star4"><i class="bi bi-star-fill"></i></label>
+              <input type="radio" name="rating" id="star3" [value]="3" [(ngModel)]="ratingSeleccionado">
+              <label for="star3"><i class="bi bi-star-fill"></i></label>
+              <input type="radio" name="rating" id="star2" [value]="2" [(ngModel)]="ratingSeleccionado">
+              <label for="star2"><i class="bi bi-star-fill"></i></label>
+              <input type="radio" name="rating" id="star1" [value]="1" [(ngModel)]="ratingSeleccionado">
+              <label for="star1"><i class="bi bi-star-fill"></i></label>
+            </div>
+
+            <div class="mb-4">
+              <label class="texto-mini fw-bold mb-2">Tu opinión</label>
+              <textarea class="form-control textarea-opinion subtexto" rows="5"
+                        placeholder="Cuéntanos sobre el ambiente, beneficios, etc."
+                        [(ngModel)]="opinionTexto"></textarea>
+            </div>
+
+            <button class="boton-primario-grande w-100" (click)="enviarReview()">
+              <i class="bi bi-send me-2"></i> Enviar valoración
+            </button>
+
+            <p class="texto-mini text-center mt-3 mb-0"
+               *ngIf="mensajeReview"
+               [class.text-danger]="mensajeError"
+               [class.text-success]="!mensajeError">
+              {{ mensajeReview }}
+            </p>
+          </div>
+
+          <!-- RANKING -->
+          <div class="bg-white cards-container panel-lateral">
+            <div class="d-flex align-items-center gap-2 mb-4">
+              <i class="bi bi-award text-azul"></i>
+              <h3 class="subtitulos fw-bold text-dark mb-0">Ranking de Reputación</h3>
+            </div>
+
+            <div *ngIf="rankingMejores.length === 0">
+              <p class="subtexto mb-0">Aún no hay suficiente información para el ranking.</p>
+            </div>
+
+            <div *ngIf="rankingMejores.length > 0">
+              <!-- Mejores -->
+              <div class="mb-4">
+                <div class="texto-ranking-verde mb-3">↗ Mejores valoradas</div>
+                <div class="d-flex flex-column gap-3">
+                  <div *ngFor="let item of rankingMejores">
+                    <div class="d-flex justify-content-between texto-mini fw-bold mb-1">
+                      <span>{{ item.company_name }}</span>
+                      <span class="text-azul">{{ item.promedio.toFixed(1) }} / 5.0</span>
+                    </div>
+                    <div class="barra-ranking">
+                      <div class="barra-ranking-fill barra-azul"
+                           [style.width]="anchoBarraPct(item.promedio)"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Peores -->
+              <div>
+                <div class="texto-ranking-rojo mb-3">↘ Bajo promedio</div>
+                <div class="d-flex flex-column gap-3">
+                  <div *ngFor="let item of rankingPeores">
+                    <div class="d-flex justify-content-between texto-mini fw-bold mb-1">
+                      <span>{{ item.company_name }}</span>
+                      <span class="texto-rojo">{{ item.promedio.toFixed(1) }} / 5.0</span>
+                    </div>
+                    <div class="barra-ranking">
+                      <div class="barra-ranking-fill barra-roja"
+                           [style.width]="anchoBarraPct(item.promedio)"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div><!-- fin columna derecha -->
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-top">
+    <div class="container py-5">
+      <div class="row mb-4 gap-4 py-2">
+        <div class="col-lg-4 col-md-12">
+          <span class="fw-bold fs-4" style="color:#554DEF;">EmpleaLink</span>
+          <p class="subtexto mt-3" style="font-size:14px;">
+            Transformamos el futuro laboral conectando el talento adecuado con el lugar perfecto.
+          </p>
+          <div class="d-flex gap-3 mt-4">
+            <span class="d-flex align-items-center justify-content-center"
+                  style="width:32px;height:32px;border-radius:50%;background:#ECEDF4;">
+              <i class="bi bi-facebook" style="font-size:14px;color:#1f2333;"></i>
+            </span>
+            <span class="d-flex align-items-center justify-content-center"
+                  style="width:32px;height:32px;border-radius:50%;background:#ECEDF4;">
+              <i class="bi bi-twitter" style="font-size:14px;color:#1f2333;"></i>
+            </span>
+            <span class="d-flex align-items-center justify-content-center"
+                  style="width:32px;height:32px;border-radius:50%;background:#ECEDF4;">
+              <i class="bi bi-instagram" style="font-size:14px;color:#1f2333;"></i>
+            </span>
+            <span class="d-flex align-items-center justify-content-center"
+                  style="width:32px;height:32px;border-radius:50%;background:#ECEDF4;">
+              <i class="bi bi-linkedin" style="font-size:14px;color:#1f2333;"></i>
+            </span>
+          </div>
+        </div>
+        <div class="col">
+          <h6 class="titulo-seccion mb-3" style="font-size:16px;">Para Candidatos</h6>
+          <ul class="lista-footer" style="font-size:14px;">
+            <li>Explorar Empleos</li>
+            <li>Subir mi CV</li>
+            <li>Consejos de Carrera</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h6 class="titulo-seccion mb-3" style="font-size:16px;">Para Empresas</h6>
+          <ul class="lista-footer" style="font-size:14px;">
+            <li>Publicar Vacante</li>
+            <li>Crear perfil</li>
+          </ul>
+        </div>
+      </div>
+      <hr style="border-color:#ecedf4;margin-top:30px;margin-bottom:20px;">
+      <div class="d-flex justify-content-between flex-wrap texto-mini">
+        <span>© 2026 EmpleaLink. Todos los derechos reservados.</span>
+        <span>Hecho con ❤ para tu futuro</span>
+      </div>
+    </div>
+  </footer>
+</div>

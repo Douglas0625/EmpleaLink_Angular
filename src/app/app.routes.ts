@@ -14,6 +14,8 @@ import { GestionUsuarios } from './pages/gestion-usuarios/gestion-usuarios';
 import { GestionEmpresas } from './pages/gestion-empresas/gestion-empresas';
 import { GestionVacantes } from './pages/gestion-vacantes/gestion-vacantes';
 import { Moderacion } from './pages/moderacion/moderacion';
+import { Recursos } from './pages/recursos/recursos';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -32,5 +34,6 @@ export const routes: Routes = [
   { path: 'gestion-empresas', component: GestionEmpresas },
   { path: 'gestion-vacantes', component: GestionVacantes },
   { path: 'moderacion', component: Moderacion },
+  { path: 'recursos', component: Recursos },
   { path: '**', redirectTo: 'login' }
 ];
