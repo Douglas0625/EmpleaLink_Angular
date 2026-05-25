@@ -1,0 +1,643 @@
+/* ─── Fondo de página ────────────────────────────────────────────────────── */
+:host {
+  display: block;
+  background-color: #f0f2f8;
+  min-height: 100vh;
+}
+
+.page-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ─── Loading ────────────────────────────────────────────────────────────── */
+.loading-page {
+  text-align: center;
+  padding: 80px 20px;
+  font-family: 'Inter', sans-serif;
+  color: #888;
+  font-size: 15px;
+}
+
+/* ─── Volver ─────────────────────────────────────────────────────────────── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #555;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  transition: color 0.15s;
+}
+
+.back-link:hover { color: #5b6df6; }
+
+/* ─── Cabecera de la oferta ──────────────────────────────────────────────── */
+.job-header-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+}
+
+.job-header-top {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tag-pill {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5b6df6;
+  background: #eef0ff;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.job-header-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.job-logo {
+  width: 62px;
+  height: 62px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.job-header-info {
+  flex: 1;
+}
+
+.job-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.job-meta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+/* ─── Layout principal ───────────────────────────────────────────────────── */
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ─── Columna izquierda ──────────────────────────────────────────────────── */
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.content-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 14px;
+}
+
+.section-text {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.7;
+  margin: 0 0 24px;
+}
+
+.subsection-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 12px;
+}
+
+/* Lista con checks */
+.check-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.check-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.check-list li::before {
+  content: '';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border-radius: 50%;
+  border: 2px solid #5b6df6;
+  background: transparent;
+  margin-top: 1px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%235b6df6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px;
+}
+
+/* Lista con puntos */
+.dot-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dot-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.dot-list li::before {
+  content: '•';
+  color: #5b6df6;
+  font-size: 18px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+/* ─── Card de rating ─────────────────────────────────────────────────────── */
+.rating-card {}
+
+.rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: #f8f9ff;
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.rating-score-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 80px;
+}
+
+.rating-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star { font-size: 18px; }
+.star.full  { color: #f59e0b; }
+.star.half  { color: #f59e0b; opacity: 0.55; }
+.star.empty { color: #ddd; }
+
+.rating-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: #aaa;
+  text-align: center;
+}
+
+.rating-highlight {
+  flex: 1;
+}
+
+.rating-quote-text {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Lista de reviews */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-item {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.review-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star-sm { font-size: 14px; }
+.star-sm.full  { color: #f59e0b; }
+.star-sm.half  { color: #f59e0b; opacity: 0.55; }
+.star-sm.empty { color: #ddd; }
+
+.review-date {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.review-comment {
+  font-size: 13.5px;
+  color: #555;
+  line-height: 1.55;
+  font-style: italic;
+  margin: 0;
+}
+
+.no-data-text {
+  color: #aaa;
+  font-style: italic;
+}
+
+.rating-body {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: #f8f9ff;
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.rating-score-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 80px;
+}
+
+.rating-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 18px;
+}
+
+.star.full  { color: #f59e0b; }
+.star.half  { color: #f59e0b; opacity: 0.5; }
+.star.empty { color: #ddd; }
+
+.rating-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #aaa;
+}
+
+.rating-quote {
+  flex: 1;
+}
+
+.rating-quote p {
+  font-size: 13.5px;
+  color: #555;
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0;
+}
+
+.rating-link {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  color: #5b6df6;
+  font-weight: 600;
+  text-decoration: none;
+  padding-top: 4px;
+}
+
+.rating-link:hover { text-decoration: underline; }
+
+/* ─── Columna derecha ────────────────────────────────────────────────────── */
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 20px;
+}
+
+/* Resumen de la oferta */
+.summary-card {
+  background: #4f46e5;
+  border-radius: 14px;
+  padding: 24px;
+  color: #fff;
+}
+
+.summary-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: #fff;
+}
+
+.summary-subtitle {
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.7);
+  margin: 0 0 20px;
+}
+
+.summary-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  padding: 16px 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-label {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+}
+
+.summary-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-align: right;
+}
+
+.salary-value {
+  color: #a5f3c0;
+  font-size: 12px;
+}
+
+.btn-aplicar {
+  width: 100%;
+  background: #fff;
+  color: #4f46e5;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: 0.2s;
+}
+
+.btn-aplicar:hover {
+  background: #f0f2ff;
+}
+
+.btn-aplicar.loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.btn-aplicar:disabled {
+  cursor: not-allowed;
+}
+
+/* Badge de estado de postulación */
+.status-badge-aplicado {
+  width: 100%;
+  padding: 13px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+}
+
+.status-submitted {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.3);
+}
+
+.status-review {
+  background: #fffbeb;
+  color: #d97706;
+  border: 1.5px solid #fde68a;
+}
+
+.status-interview {
+  background: #eff6ff;
+  color: #3b82f6;
+  border: 1.5px solid #bfdbfe;
+}
+
+.status-accepted {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1.5px solid #bbf7d0;
+}
+
+.status-rejected {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1.5px solid #fecaca;
+}
+
+.error-aplicar {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: #fca5a5;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Card de empresa */
+.company-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px;
+}
+
+.company-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.company-mini-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.company-mini-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.company-card-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 2px;
+}
+
+.company-card-industry {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+}
+
+.company-card-desc {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 14px;
+}
+
+.company-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.company-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: #666;
+}
+
+.btn-ver-empresa {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid #5b6df6;
+  color: #5b6df6;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: 0.2s;
+}
+
+.btn-ver-empresa:hover {
+  background: #f0f4ff;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .right-column {
+    position: static;
+    order: -1;
+  }
+
+  .job-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 560px) {
+  .job-header-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rating-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

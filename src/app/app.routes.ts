@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
 import { Registro } from './pages/registro/registro';
+import { LandingComponent } from './pages/landing/landing';
 import { DashboardAdmin } from './pages/dashboard-admin/dashboard-admin';
 import { DashboardEmpresa } from './pages/dashboard-empresa/dashboard-empresa';
 import { DashboardUsuario } from './pages/dashboard-usuario/dashboard-usuario';
@@ -16,7 +17,7 @@ import { GestionVacantes } from './pages/gestion-vacantes/gestion-vacantes';
 import { Moderacion } from './pages/moderacion/moderacion';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: Registro },
   { path: 'dashboard-admin', component: DashboardAdmin },

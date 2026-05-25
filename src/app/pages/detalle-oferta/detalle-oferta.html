@@ -1,1 +1,181 @@
-<p>detalle-oferta works!</p>
+<div *ngIf="loading" class="loading-page">
+  <p>Cargando oferta...</p>
+</div>
+
+<div *ngIf="!loading && oferta" class="page-container">
+
+  <!-- Volver -->
+  <a routerLink="/ofertas" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Volver a resultados
+  </a>
+
+  <!-- Cabecera de la oferta -->
+  <div class="job-header-card">
+    <div class="job-header-top">
+      <span class="tag-pill" *ngFor="let tag of oferta.tags">{{ tag }}</span>
+    </div>
+    <div class="job-header-body">
+      <div class="job-logo" [style.background]="oferta.logoBg">
+        <img *ngIf="oferta.companyLogo" [src]="oferta.companyLogo" [alt]="oferta.companyName">
+        <span *ngIf="!oferta.companyLogo">{{ oferta.initials }}</span>
+      </div>
+      <div class="job-header-info">
+        <h1 class="job-title">{{ oferta.title }}</h1>
+        <div class="job-meta">
+          <span class="meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            {{ oferta.companyName }}
+          </span>
+          <span class="meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            {{ oferta.location }}
+          </span>
+          <span class="meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Publicado {{ getDaysAgo(oferta.date) }}
+          </span>
+          <span class="meta-item" *ngIf="oferta.applicants > 0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            {{ oferta.applicants }} aplicante{{ oferta.applicants !== 1 ? 's' : '' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal en dos columnas -->
+  <div class="main-layout">
+
+    <!-- Columna izquierda -->
+    <div class="left-column">
+
+      <!-- Descripción del puesto -->
+      <div class="content-card">
+        <h2 class="section-title">Descripción del puesto</h2>
+        <p class="section-text">{{ oferta.description }}</p>
+      </div>
+
+      <!-- Valoraciones reales -->
+      <div class="content-card rating-card" *ngIf="reviews.length > 0">
+        <h2 class="section-title">¿Qué dicen de trabajar aquí?</h2>
+
+        <!-- Resumen del rating -->
+        <div class="rating-summary">
+          <div class="rating-score-block">
+            <span class="rating-number">{{ ratingPromedio }}</span>
+            <div class="stars">
+              <span *ngFor="let s of getStarArray(ratingPromedio)" class="star" [ngClass]="s">★</span>
+            </div>
+            <span class="rating-label">{{ reviews.length }} valoración{{ reviews.length !== 1 ? 'es' : '' }}</span>
+          </div>
+          <div class="rating-highlight" *ngIf="reviews[0]">
+            <p class="rating-quote-text">"{{ reviews[0].comment }}"</p>
+          </div>
+        </div>
+
+        <!-- Lista de comentarios -->
+        <div class="reviews-list">
+          <div class="review-item" *ngFor="let r of reviews">
+            <div class="review-header">
+              <div class="review-stars">
+                <span *ngFor="let s of getStarArray(r.rating)" class="star-sm" [ngClass]="s">★</span>
+              </div>
+              <span class="review-date">{{ r.created_at | date:'dd MMM yyyy' }}</span>
+            </div>
+            <p class="review-comment">"{{ r.comment }}"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sin valoraciones -->
+      <div class="content-card" *ngIf="reviews.length === 0">
+        <h2 class="section-title">¿Qué dicen de trabajar aquí?</h2>
+        <p class="section-text no-data-text">Esta empresa aún no tiene valoraciones registradas.</p>
+      </div>
+
+    </div>
+
+    <!-- Columna derecha -->
+    <aside class="right-column">
+
+      <!-- Resumen de la oferta -->
+      <div class="summary-card">
+        <h3 class="summary-title">Resumen de la oferta</h3>
+        <p class="summary-subtitle">Postúlate ahora y da el siguiente paso</p>
+        <div class="summary-rows">
+          <div class="summary-row">
+            <span class="summary-label">Salario</span>
+            <span class="summary-value salary-value">{{ formatSalary(oferta.salaryMin, oferta.salaryMax) }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Tipo</span>
+            <span class="summary-value">{{ oferta.jobType }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Modalidad</span>
+            <span class="summary-value">{{ oferta.modality }}</span>
+          </div>
+          <div class="summary-row" *ngIf="oferta.applicants > 0">
+            <span class="summary-label">Aplicantes</span>
+            <span class="summary-value">{{ oferta.applicants }}</span>
+          </div>
+        </div>
+        <!-- Si ya está postulado: mostrar badge de estado -->
+        <div *ngIf="aplicado && !aplicando" class="status-badge-aplicado" [ngClass]="getStatusClass()">
+          {{ getStatusLabel() }}
+        </div>
+
+        <!-- Si no está postulado: mostrar botón -->
+        <button
+          *ngIf="!aplicado"
+          class="btn-aplicar"
+          [class.loading]="aplicando"
+          [disabled]="aplicando"
+          (click)="aplicar()">
+          <span *ngIf="aplicando">Enviando...</span>
+          <span *ngIf="!aplicando">Aplicar Ahora</span>
+        </button>
+        <p class="error-aplicar" *ngIf="errorAplicar">{{ errorAplicar }}</p>
+      </div>
+
+      <!-- Info de la empresa -->
+      <div class="company-card">
+        <div class="company-card-header">
+          <div class="company-mini-logo" [style.background]="oferta.logoBg">
+            <img *ngIf="oferta.companyLogo" [src]="oferta.companyLogo" [alt]="oferta.companyName">
+            <span *ngIf="!oferta.companyLogo">{{ oferta.initials }}</span>
+          </div>
+          <div>
+            <p class="company-card-name">{{ oferta.companyName }}</p>
+            <p class="company-card-industry">Empresa registrada en EmpleaLink</p>
+          </div>
+        </div>
+
+        <div class="company-card-meta">
+          <span *ngIf="oferta.companyPhone">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            {{ oferta.companyPhone }}
+          </span>
+          <span *ngIf="oferta.companyWebsite">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            {{ oferta.companyWebsite }}
+          </span>
+          <span *ngIf="!oferta.companyPhone && !oferta.companyWebsite" class="no-data-text">
+            Sin información de contacto registrada.
+          </span>
+        </div>
+
+        <button class="btn-ver-empresa" [routerLink]="['/perfil-empresa']">
+          Ver perfil de empresa
+        </button>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<div *ngIf="!loading && !oferta" class="loading-page">
+  <p>No se encontró la oferta solicitada.</p>
+  <a routerLink="/ofertas" class="back-link" style="display:inline-flex;margin-top:16px">← Volver a ofertas</a>
+</div>
