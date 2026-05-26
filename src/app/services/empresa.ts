@@ -79,4 +79,17 @@ export class EmpresaService {
         })
       );
   }
+
+  /**
+   * Actualiza el perfil de la empresa
+   */
+  updateCompanyProfile(userId: string, profileData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${userId}/company-profile`, profileData)
+      .pipe(
+        catchError(err => {
+          console.error('Error updating company profile:', err);
+          return of(null);
+        })
+      );
+  }
 }
