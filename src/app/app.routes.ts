@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
+<<<<<<< HEAD
 import { Registro } from './pages/registro/registro';
+=======
+>>>>>>> douglas_branch
 import { LandingComponent } from './pages/landing/landing';
 import { DashboardAdmin } from './pages/dashboard-admin/dashboard-admin';
 import { DashboardEmpresa } from './pages/dashboard-empresa/dashboard-empresa';
@@ -16,7 +19,12 @@ import { GestionEmpresas } from './pages/gestion-empresas/gestion-empresas';
 import { GestionVacantes } from './pages/gestion-vacantes/gestion-vacantes';
 import { GestionVacantesEmpresa } from './pages/gestion-vacantes-empresa/gestion-vacantes-empresa';
 import { Moderacion } from './pages/moderacion/moderacion';
+<<<<<<< HEAD
 import { authGuard } from './guards/auth-guard';
+=======
+import { GestionOfertas } from './pages/gestion-ofertas/gestion-ofertas';
+import { authGuard }    from './guards/auth-guard';
+>>>>>>> douglas_branch
 import { adminGuard } from './guards/admin-guard';
 import { empresaGuard } from './guards/empresa-guard';
 import { candidatoGuard } from './guards/usuario-guard';
@@ -24,9 +32,28 @@ import { candidatoGuard } from './guards/usuario-guard';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+<<<<<<< HEAD
   { path: 'registro', component: Registro },
   { path: 'ofertas', component: OfertasComponent },
   { path: 'ofertas/:id', component: DetalleOferta },
+=======
+  { path: 'dashboard-admin', component: DashboardAdmin },
+  { path: 'dashboard-empresa', component: DashboardEmpresa },
+  { path: 'dashboard-usuario', component: DashboardUsuario },
+  { path: 'ofertas', component: OfertasComponent },
+  { path: 'ofertas/:id', component: DetalleOferta },
+  { path: 'gestion-ofertas', component: GestionOfertas, canActivate: [authGuard, empresaGuard] },
+  { path: 'perfil-usuario', component: PerfilUsuario },
+  { path: 'perfil-empresa', component: PerfilEmpresa },
+  { path: 'postulaciones', component: Postulaciones },
+  { path: 'foro', component: Foro },
+  { path: 'gestion-usuarios', component: GestionUsuarios },
+  { path: 'gestion-empresas', component: GestionEmpresas },
+  { path: 'gestion-vacantes', component: GestionVacantes },
+  { path: 'moderacion', component: Moderacion },
+  { path: 'ofertas', component: OfertasComponent },
+  { path: 'ofertas/:id', component: DetalleOferta },
+>>>>>>> douglas_branch
   { path: 'dashboard-usuario', component: DashboardUsuario, canActivate: [authGuard, candidatoGuard] },
   { path: 'postulaciones', component: Postulaciones, canActivate: [authGuard, candidatoGuard] },
   { path: 'perfil-usuario', component: PerfilUsuario, canActivate: [authGuard, candidatoGuard] },
