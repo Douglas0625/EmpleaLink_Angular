@@ -10,6 +10,7 @@ import { filter } from 'rxjs/operators';
   imports: [CommonModule, RouterOutlet, RouterModule, NavbarComponent, FooterComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
+  styleUrls: ['./app.css']
 })
 export class App {
   mostrarNavbar: boolean = false;
