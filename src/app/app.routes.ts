@@ -20,6 +20,7 @@ import { authGuard }    from './guards/auth-guard';
 import { adminGuard } from './guards/admin-guard';
 import { empresaGuard } from './guards/empresa-guard';
 import { candidatoGuard } from './guards/usuario-guard';
+import { PerfilEmpresaPublico } from './pages/perfil-empresa-publico/perfil-empresa-publico';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -30,7 +31,6 @@ export const routes: Routes = [
   { path: 'ofertas', component: OfertasComponent },
   { path: 'ofertas/:id', component: DetalleOferta },
   { path: 'gestion-ofertas', component: GestionOfertas, canActivate: [authGuard, empresaGuard] },
-  { path: 'perfil-usuario', component: PerfilUsuario },
   { path: 'perfil-empresa', component: PerfilEmpresa },
   { path: 'postulaciones', component: Postulaciones },
   { path: 'foro', component: Foro },
@@ -52,5 +52,6 @@ export const routes: Routes = [
   { path: 'gestion-vacantes', component: GestionVacantes, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-vacantes-empresa', component: GestionVacantesEmpresa, canActivate: [authGuard, empresaGuard] },
   { path: 'moderacion', component: Moderacion, canActivate: [authGuard, adminGuard] },
+  { path: 'perfil-empresa-publico/:id', component: PerfilEmpresaPublico },
   { path: '**', redirectTo: 'login' }
 ];
