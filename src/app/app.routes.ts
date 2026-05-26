@@ -13,7 +13,6 @@ import { Foro } from './pages/foro/foro';
 import { GestionUsuarios } from './pages/gestion-usuarios/gestion-usuarios';
 import { GestionEmpresas } from './pages/gestion-empresas/gestion-empresas';
 import { GestionVacantes } from './pages/gestion-vacantes/gestion-vacantes';
-import { GestionVacantesEmpresa } from './pages/gestion-vacantes-empresa/gestion-vacantes-empresa';
 import { Moderacion } from './pages/moderacion/moderacion';
 import { GestionOfertas } from './pages/gestion-ofertas/gestion-ofertas';
 import { authGuard }    from './guards/auth-guard';
@@ -21,6 +20,7 @@ import { adminGuard } from './guards/admin-guard';
 import { empresaGuard } from './guards/empresa-guard';
 import { candidatoGuard } from './guards/usuario-guard';
 import { PerfilEmpresaPublico } from './pages/perfil-empresa-publico/perfil-empresa-publico';
+import { DetalleCandidato } from './pages/detalle-candidato/detalle-candidato';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -36,7 +36,6 @@ export const routes: Routes = [
   { path: 'foro', component: Foro },
   { path: 'gestion-usuarios', component: GestionUsuarios },
   { path: 'gestion-empresas', component: GestionEmpresas },
-  { path: 'gestion-vacantes', component: GestionVacantes },
   { path: 'moderacion', component: Moderacion },
   { path: 'ofertas', component: OfertasComponent },
   { path: 'ofertas/:id', component: DetalleOferta },
@@ -50,8 +49,8 @@ export const routes: Routes = [
   { path: 'gestion-usuarios', component: GestionUsuarios, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-empresas', component: GestionEmpresas, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-vacantes', component: GestionVacantes, canActivate: [authGuard, adminGuard] },
-  { path: 'gestion-vacantes-empresa', component: GestionVacantesEmpresa, canActivate: [authGuard, empresaGuard] },
   { path: 'moderacion', component: Moderacion, canActivate: [authGuard, adminGuard] },
   { path: 'perfil-empresa-publico/:id', component: PerfilEmpresaPublico },
+  { path: 'detalle-candidato', component: DetalleCandidato },
   { path: '**', redirectTo: 'login' }
 ];

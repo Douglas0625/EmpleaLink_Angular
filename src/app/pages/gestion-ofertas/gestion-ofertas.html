@@ -159,7 +159,7 @@
                     <small class="text-secondary">{{ c.titulo }}</small>
                   </div>
                 </div>
-                <a [routerLink]="['/perfil-candidato']"
+                <a [routerLink]="['/detalle-candidato']"
                   [queryParams]="{ id: c.profileId, jobId: c.jobId }"
                   class="fw-bold text-decoration-none" style="color:#554DEF;font-size:13px;">
                   Ver perfil
@@ -332,54 +332,4 @@
   </div>
 </div>
 
-<!-- ─── FOOTER ────────────────────────────────────────────────────────────── -->
-<footer class="bg-white border-top">
-  <div class="container py-5">
-    <div class="row mb-4 gap-4 py-2">
-      <div class="col-lg-4 col-md-12">
-        <img src="media/Frame.svg" width="130" alt="EmpleaLink" class="mb-3">
-        <p class="subtexto" style="font-size:14px;">
-          Transformamos el futuro laboral conectando el talento adecuado con el lugar perfecto.
-        </p>
-        <div class="d-flex gap-3 mt-4">
-          <span class="bg-gris d-flex align-items-center justify-content-center"
-            style="width:32px;height:32px;border-radius:50%;">
-            <i class="bi bi-facebook" style="font-size:14px;color:#1f2333;"></i>
-          </span>
-          <span class="bg-gris d-flex align-items-center justify-content-center"
-            style="width:32px;height:32px;border-radius:50%;">
-            <i class="bi bi-twitter" style="font-size:14px;color:#1f2333;"></i>
-          </span>
-          <span class="bg-gris d-flex align-items-center justify-content-center"
-            style="width:32px;height:32px;border-radius:50%;">
-            <i class="bi bi-instagram" style="font-size:14px;color:#1f2333;"></i>
-          </span>
-          <span class="bg-gris d-flex align-items-center justify-content-center"
-            style="width:32px;height:32px;border-radius:50%;">
-            <i class="bi bi-linkedin" style="font-size:14px;color:#1f2333;"></i>
-          </span>
-        </div>
-      </div>
-      <div class="col">
-        <h6 class="titulo-seccion mb-3" style="font-size:16px;">Para Candidatos</h6>
-        <ul class="lista-footer" style="font-size:14px;">
-          <li>Explorar Empleos</li>
-          <li>Subir mi CV</li>
-          <li>Consejos de Carrera</li>
-        </ul>
-      </div>
-      <div class="col">
-        <h6 class="titulo-seccion mb-3" style="font-size:16px;">Para Empresas</h6>
-        <ul class="lista-footer" style="font-size:14px;">
-          <li>Publicar Vacante</li>
-          <li>Crear perfil</li>
-        </ul>
-      </div>
-    </div>
-    <hr style="border-color:#ecedf4;">
-    <div class="d-flex justify-content-between flex-wrap texto-mini">
-      <span>© 2026 EmpleaLink. Todos los derechos reservados.</span>
-      <span>Hecho con ❤ para tu futuro</span>
-    </div>
-  </div>
-</footer>
+
