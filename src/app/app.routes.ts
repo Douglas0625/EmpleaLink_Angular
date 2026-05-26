@@ -13,7 +13,7 @@ import { Postulaciones } from './pages/postulaciones/postulaciones';
 import { Foro } from './pages/foro/foro';
 import { GestionUsuarios } from './pages/gestion-usuarios/gestion-usuarios';
 import { GestionEmpresas } from './pages/gestion-empresas/gestion-empresas';
-import { GestionVacantes } from './pages/gestion-vacantes/gestion-vacantes';
+import { GestionVacantes } from './pages/gestion-vacantes-empresa/gestion-vacantes-empresa';
 import { Moderacion } from './pages/moderacion/moderacion';
 import { authGuard } from './guards/auth-guard';
 import { adminGuard } from './guards/admin-guard';
