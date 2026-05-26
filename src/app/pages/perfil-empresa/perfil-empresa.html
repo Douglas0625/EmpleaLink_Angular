@@ -1,240 +1,415 @@
-<!-- Sección Principal -->
-<section class="py-5 perfil-empresa-container">
+<!-- ══════════════════════════════════════════════════════════════
+     LOADING
+     ══════════════════════════════════════════════════════════════ -->
+<div *ngIf="cargando" class="pe-loader-overlay">
+  <div class="pe-spinner-wrap">
+    <div class="pe-spinner"></div>
+    <p class="pe-spinner-text">Cargando perfil de empresa…</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     ERROR GLOBAL
+     ══════════════════════════════════════════════════════════════ -->
+<div *ngIf="!cargando && error && !empresaActual" class="container py-5 text-center">
+  <div class="pe-error-card mx-auto">
+    <i class="bi bi-exclamation-triangle-fill pe-error-icon"></i>
+    <h4 class="mt-3 fw-bold">Perfil no encontrado</h4>
+    <p class="text-secondary">{{ error }}</p>
+    <a routerLink="/dashboard-empresa" class="btn pe-btn-primary mt-2">Volver al Dashboard</a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     CONTENIDO PRINCIPAL
+     ══════════════════════════════════════════════════════════════ -->
+<section class="pe-section" *ngIf="!cargando && empresaActual">
   <div class="container">
-    <!-- Encabezado -->
-    <div class="d-flex justify-content-between align-items-start mb-5">
+
+    <!-- ── Cabecera ─────────────────────────────────────────── -->
+    <div class="pe-header-row">
       <div>
-        <a routerLink="/dashboard-empresa" class="enlace-primario mb-3 d-inline-block">
+        <a routerLink="/dashboard-empresa" class="pe-back-link">
           <i class="bi bi-arrow-left"></i> Volver al Dashboard
         </a>
-        <h1 class="titulos text-azul mb-2">Mi Empresa</h1>
-        <p class="parrafos">Gestiona tu identidad institucional y destaca tu cultura para atraer el mejor talento.</p>
+        <h1 class="pe-title">Mi <span class="pe-accent">Empresa</span></h1>
+        <p class="pe-subtitle">Gestiona tu identidad institucional y destaca tu cultura para atraer el mejor talento.</p>
       </div>
-      <div class="d-flex gap-2">
-        <button class="btn-cancel" (click)="cancelar()" *ngIf="modoEdicion">Cancelar</button>
-        <button class="boton-primario" (click)="guardarCambios()" *ngIf="modoEdicion" [disabled]="guardando">
-          <span *ngIf="guardando" class="spinner-border spinner-border-sm me-2"></span>
-          Guardar cambios
+      <div class="pe-header-actions">
+        <button class="btn pe-btn-secondary" (click)="cancelarCambios()" [disabled]="guardando">
+          Cancelar
+        </button>
+        <button class="btn pe-btn-primary" (click)="guardarCambios()" [disabled]="guardando">
+          <span *ngIf="guardando" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          <i *ngIf="!guardando" class="bi bi-floppy me-1"></i>
+          {{ guardando ? 'Guardando…' : 'Guardar Cambios' }}
         </button>
       </div>
     </div>
 
-    <!-- Grid Principal -->
-    <div class="row g-4">
-      <!-- Columna Izquierda -->
-      <div class="col-lg-4">
-        <!-- Card Perfil -->
-        <div class="perfil-card cards-container bg-white">
-          <div class="position-relative mb-4">
-            <span class="badge-verificado">
-              <i class="bi bi-check-circle-fill"></i> Verificado
-            </span>
+    <!-- ── Feedback global ──────────────────────────────────── -->
+    <div class="pe-alert pe-alert-success" *ngIf="mensajeExito">
+      <i class="bi bi-check-circle-fill me-2"></i>{{ mensajeExito }}
+    </div>
+    <div class="pe-alert pe-alert-error" *ngIf="error && empresaActual">
+      <i class="bi bi-exclamation-circle-fill me-2"></i>{{ error }}
+    </div>
+
+    <!-- ── Grid Principal ───────────────────────────────────── -->
+    <div class="pe-grid">
+
+      <!-- ══ COLUMNA IZQUIERDA ════════════════════════════════ -->
+      <aside class="pe-col-left">
+
+        <!-- Card perfil visual -->
+        <div class="pe-profile-card">
+
+          <!-- Header con avatar -->
+          <div class="pe-profile-header">
+            <div class="pe-avatar-wrap">
+              <!-- Logo -->
+              <img
+                *ngIf="logoUrl"
+                [src]="logoUrl"
+                [alt]="nombreDisplay"
+                class="pe-avatar pe-avatar-img"
+                (error)="logoUrl = ''"
+              />
+              <!-- Iniciales fallback -->
+              <div *ngIf="!logoUrl" class="pe-avatar">{{ iniciales }}</div>
+
+              <!-- Botón cámara -->
+              <button class="pe-cam-btn" type="button" title="Cambiar logo" (click)="abrirModalLogo()">
+                <i class="bi bi-camera"></i>
+              </button>
+            </div>
+
+            <h3 class="pe-profile-name">{{ nombreDisplay }}</h3>
+            <p class="pe-profile-industry pe-accent fw-bold">{{ industriaDisplay }}</p>
+            <small class="pe-profile-location text-secondary">
+              <i class="bi bi-geo-alt pe-accent"></i> {{ ubicacionDisplay }}
+            </small>
           </div>
 
-          <div class="text-center mb-4">
-            <div class="empresa-logo-grande mb-3">
-              <img src="https://ui-avatars.com/api/?name=TechFlow&background=5b6df6&color=fff&size=120" 
-                   alt="Logo empresa" class="img-fluid">
+          <!-- Body con contacto -->
+          <div class="pe-profile-body">
+            <div class="pe-info-pill">
+              <i class="bi bi-envelope pe-accent"></i>
+              <span>{{ emailDisplay || 'Sin correo' }}</span>
             </div>
-            <h2 class="titulo-card">{{ nombreEmpresaDisplay }}</h2>
-            <p class="parrafos mb-3">{{ formulario.get('ubicacion')?.value }}</p>
-          </div>
+            <div class="pe-info-pill">
+              <i class="bi bi-telephone pe-accent"></i>
+              <span>{{ telefonoDisplay || 'Sin teléfono' }}</span>
+            </div>
 
-          <!-- Contacto -->
-          <div class="contacto-info mb-4">
-            <div class="info-row mb-3">
-              <i class="bi bi-envelope"></i>
-              <span>{{ formulario.get('emailCorporativo')?.value }}</span>
-            </div>
-            <div class="info-row mb-3">
-              <i class="bi bi-telephone"></i>
-              <span>{{ formulario.get('telefono')?.value }}</span>
-            </div>
-          </div>
+            <hr class="pe-divider" />
 
-          <button class="boton-secundario w-100 mb-3" (click)="verPerfilPublico()">
-            <i class="bi bi-eye"></i> Ver perfil público
-          </button>
-
-          <!-- Estadísticas -->
-          <div class="estadisticas-compactas">
-            <div class="stat-row">
-              <div class="stat-item">
-                <p class="stat-numero">{{ stats.vacantesTotales }}</p>
-                <p class="stat-label">Vacantes Totales</p>
-              </div>
-              <div class="stat-item">
-                <p class="stat-numero">{{ stats.vacantesActivas }}</p>
-                <p class="stat-label">Vacantes Activas</p>
-              </div>
-            </div>
-            <div class="stat-row mt-3">
-              <div class="stat-item">
-                <p class="stat-numero">1.4k</p>
-                <p class="stat-label">Postulantes</p>
-              </div>
-              <div class="stat-item">
-                <p class="stat-numero">{{ stats.crecimiento }}</p>
-                <p class="stat-label">Crecimiento</p>
-              </div>
-            </div>
+            <button
+            class="btn pe-btn-secondary-lg w-100"
+            type="button"
+            [routerLink]="['/perfil-empresa-publico', empresaActual.id]">
+              <i class="bi bi-eye me-1"></i> Ver perfil público
+            </button>
           </div>
         </div>
-      </div>
 
-      <!-- Columna Derecha -->
-      <div class="col-lg-8">
-        <form [formGroup]="formulario" (ngValueChange)="onFormChange()">
-          <!-- Información General -->
-          <div class="cards-container bg-white mb-4">
-            <div class="d-flex align-items-center gap-2 mb-4">
-              <i class="bi bi-shield-lock" style="font-size: 24px; color: #5b6df6;"></i>
+        <!-- Card stats -->
+        <div class="pe-stats-card">
+          <h6 class="pe-stats-title">ACTIVIDAD GENERAL</h6>
+          <div class="pe-stats-grid">
+
+            <div class="pe-stat-box">
+              <i class="bi bi-suitcase-lg pe-accent fs-4"></i>
+              <p class="pe-stat-num">{{ statVacantesTotales }}</p>
+              <small class="text-secondary text-uppercase" style="font-size:0.65rem;letter-spacing:0.5px;">Vacantes Totales</small>
+            </div>
+
+            <div class="pe-stat-box">
+              <i class="bi bi-check-circle fs-4" style="color:#22C55E"></i>
+              <p class="pe-stat-num">{{ statVacantesActivas }}</p>
+              <small class="text-secondary text-uppercase" style="font-size:0.65rem;letter-spacing:0.5px;">Activas</small>
+            </div>
+
+            <div class="pe-stat-box">
+              <i class="bi bi-people fs-4 pe-accent"></i>
+              <p class="pe-stat-num">{{ statPostulantes }}</p>
+              <small class="text-secondary text-uppercase" style="font-size:0.65rem;letter-spacing:0.5px;">Postulantes</small>
+            </div>
+
+            <div class="pe-stat-box">
+              <i class="bi bi-archive fs-4" style="color:#EF4444"></i>
+              <p class="pe-stat-num">{{ statVacantesCerradas }}</p>
+              <small class="text-secondary text-uppercase" style="font-size:0.65rem;letter-spacing:0.5px;">Cerradas</small>
+            </div>
+
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- ══ COLUMNA DERECHA: Formulario ═══════════════════════ -->
+      <div class="pe-col-right">
+        <form [formGroup]="formulario" novalidate>
+
+          <!-- ── Sección: Información General ──────────────── -->
+          <div class="pe-form-card">
+            <div class="pe-section-header">
+              <div class="pe-section-icon">
+                <i class="bi bi-buildings"></i>
+              </div>
               <div>
-                <h2 class="titulo-seccion mb-0">Información General</h2>
-                <p class="texto-mini mb-0">Datos básicos de identificación institucionale</p>
+                <h2 class="pe-section-title">Información General</h2>
+                <p class="pe-section-sub">Datos básicos de identificación institucional</p>
               </div>
             </div>
 
             <div class="row g-3">
+
+              <!-- Nombre de empresa -->
               <div class="col-md-6">
-                <label class="form-label">Nombre de la Empresa</label>
-                <input 
-                  type="text" 
-                  class="form-control form-control-lg"
-                  formControlName="nombreEmpresa"
-                  [readonly]="!modoEdicion">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Correo Corporativo</label>
-                <input 
-                  type="email" 
-                  class="form-control form-control-lg"
-                  formControlName="emailCorporativo"
-                  [readonly]="!modoEdicion">
+                <label class="pe-label">Nombre de la empresa <span class="pe-required">*</span></label>
+                <input
+                  type="text"
+                  class="form-control pe-input"
+                  [class.is-invalid]="isInvalid('company_name')"
+                  formControlName="company_name"
+                  placeholder="TechFlow Solutions"
+                />
+                <div *ngIf="isInvalid('company_name')" class="invalid-feedback">Campo obligatorio.</div>
               </div>
 
+              <!-- Correo corporativo -->
               <div class="col-md-6">
-                <label class="form-label">Teléfono</label>
-                <input 
-                  type="tel" 
-                  class="form-control form-control-lg"
-                  formControlName="telefono"
-                  [readonly]="!modoEdicion">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Ubicación</label>
-                <input 
-                  type="text" 
-                  class="form-control form-control-lg"
-                  placeholder="Ciudad, País"
-                  formControlName="ubicacion"
-                  [readonly]="!modoEdicion">
+                <label class="pe-label">Correo Corporativo <span class="pe-required">*</span></label>
+                <input
+                  type="email"
+                  class="form-control pe-input"
+                  [class.is-invalid]="isInvalid('email')"
+                  formControlName="email"
+                  placeholder="contact@empresa.com"
+                />
+                <div *ngIf="isInvalid('email')" class="invalid-feedback">Ingresa un correo válido.</div>
               </div>
 
+              <!-- Teléfono -->
               <div class="col-md-6">
-                <label class="form-label">Rubro o Sector</label>
-                <select 
-                  class="form-select form-select-lg"
-                  formControlName="rubroSector"
-                  [disabled]="!modoEdicion">
-                  <option value="Tecnología e IA">Tecnología e IA</option>
-                  <option value="Finanzas">Finanzas</option>
-                  <option value="E-commerce">E-commerce</option>
-                  <option value="Salud">Salud</option>
-                  <option value="Educación">Educación</option>
+                <label class="pe-label">Teléfono</label>
+                <input
+                  type="text"
+                  class="form-control pe-input"
+                  formControlName="phone"
+                  placeholder="+503 5555 0123"
+                />
+              </div>
+
+              <!-- Ubicación -->
+              <div class="col-md-6">
+                <label class="pe-label">Ubicación</label>
+                <input
+                  type="text"
+                  class="form-control pe-input"
+                  formControlName="location"
+                  placeholder="San Salvador, El Salvador"
+                />
+              </div>
+
+              <!-- Industria -->
+              <div class="col-md-6">
+                <label class="pe-label">Rubro o Sector</label>
+                <select class="form-select pe-input" formControlName="industry_id">
+                  <option value="">Selecciona un rubro</option>
+                  <option
+                    *ngFor="let ind of industrias; trackBy: trackById"
+                    [value]="ind.id"
+                  >{{ getEtiquetaIndustria(ind) }}</option>
                 </select>
               </div>
+
+              <!-- Tamaño -->
               <div class="col-md-6">
-                <label class="form-label">Tamaño de la Empresa</label>
-                <select 
-                  class="form-select form-select-lg"
-                  formControlName="tamanoEmpresa"
-                  [disabled]="!modoEdicion">
-                  <option *ngFor="let tamano of tamanoOpciones" [value]="tamano.id">
-                    {{ tamano.name }}
-                  </option>
+                <label class="pe-label">Tamaño de la empresa</label>
+                <select class="form-select pe-input" formControlName="company_size_id">
+                  <option value="">Selecciona un tamaño</option>
+                  <option
+                    *ngFor="let t of tamanosEmpresa; trackBy: trackById"
+                    [value]="t.id"
+                  >{{ getEtiquetaTamano(t) }}</option>
                 </select>
               </div>
 
+              <!-- Sitio web -->
               <div class="col-12">
-                <label class="form-label">Dirección Física</label>
-                <input 
-                  type="text" 
-                  class="form-control form-control-lg"
-                  placeholder="Av. del Libertador 1234, CABA"
-                  formControlName="direccionFisica"
-                  [readonly]="!modoEdicion">
+                <label class="pe-label">Sitio web oficial</label>
+                <input
+                  type="url"
+                  class="form-control pe-input"
+                  formControlName="website_url"
+                  placeholder="https://ejemplo.com"
+                />
               </div>
+
+              <!-- Cover image -->
+              <div class="col-12">
+                <label class="pe-label">Enlace de imagen de portada</label>
+                <input
+                  type="url"
+                  class="form-control pe-input"
+                  formControlName="cover_image_url"
+                  placeholder="https://ejemplo.com/portada.jpg"
+                />
+              </div>
+
             </div>
           </div>
 
-          <!-- Descripción y Cultura -->
-          <div class="cards-container bg-white">
-            <div class="d-flex align-items-center gap-2 mb-4">
-              <i class="bi bi-chat-left-quote" style="font-size: 24px; color: #5b6df6;"></i>
-              <div>
-                <h2 class="titulo-seccion mb-0">Descripción y Cultura</h2>
-                <p class="texto-mini mb-0">Define la esencia de tu organización</p>
+          <!-- ── Sección: Descripción y Cultura ─────────────── -->
+          <div class="pe-form-card">
+            <div class="pe-section-header">
+              <div class="pe-section-icon">
+                <i class="bi bi-file-earmark-text"></i>
               </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Sobre la empresa</label>
-              <textarea 
-                class="form-control form-control-lg"
-                rows="3"
-                placeholder="Describe quién eres, qué hace tu empresa y por qué destaca"
-                formControlName="sobreEmpresa"
-                [readonly]="!modoEdicion"></textarea>
-              <small class="texto-mini">Mínimo 50 caracteres</small>
+              <div>
+                <h2 class="pe-section-title">Descripción y Cultura</h2>
+                <p class="pe-section-sub">Define la esencia de tu organización</p>
+              </div>
             </div>
 
             <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Misión (Opcional)</label>
-                <textarea 
-                  class="form-control form-control-lg"
-                  rows="2"
-                  placeholder="Escribe tu misión aquí..."
-                  formControlName="mision"
-                  [readonly]="!modoEdicion"></textarea>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Visión (Opcional)</label>
-                <textarea 
-                  class="form-control form-control-lg"
-                  rows="2"
-                  placeholder="Escribe tu visión aquí..."
-                  formControlName="vision"
-                  [readonly]="!modoEdicion"></textarea>
-              </div>
-            </div>
 
-            <div class="form-group">
-              <label class="form-label">Cultura y Beneficios</label>
-              <textarea 
-                class="form-control form-control-lg"
-                rows="3"
-                placeholder="Forjamos un ambiente de trabajo colaborativo, flexible y orientado a objetivos..."
-                formControlName="culturaYBeneficios"
-                [readonly]="!modoEdicion"></textarea>
+              <!-- Sobre la empresa -->
+              <div class="col-12">
+                <label class="pe-label">Sobre la empresa <span class="pe-required">*</span></label>
+                <textarea
+                  class="form-control pe-input pe-textarea"
+                  [class.is-invalid]="isInvalid('about_company')"
+                  formControlName="about_company"
+                  rows="4"
+                  placeholder="Somos una compañía líder en…"
+                ></textarea>
+                <div *ngIf="isInvalid('about_company')" class="invalid-feedback">Mínimo 20 caracteres.</div>
+              </div>
+
+              <!-- Misión -->
+              <div class="col-md-6">
+                <label class="pe-label">Misión <span class="pe-optional">(Opcional)</span></label>
+                <textarea
+                  class="form-control pe-input pe-textarea"
+                  formControlName="mission"
+                  rows="4"
+                  placeholder="Escribe la misión aquí…"
+                ></textarea>
+              </div>
+
+              <!-- Visión -->
+              <div class="col-md-6">
+                <label class="pe-label">Visión <span class="pe-optional">(Opcional)</span></label>
+                <textarea
+                  class="form-control pe-input pe-textarea"
+                  formControlName="vision"
+                  rows="4"
+                  placeholder="Escribe la visión aquí…"
+                ></textarea>
+              </div>
+
+              <!-- Cultura -->
+              <div class="col-12">
+                <label class="pe-label">Cultura y Beneficios</label>
+                <textarea
+                  class="form-control pe-input pe-textarea"
+                  formControlName="culture"
+                  rows="4"
+                  placeholder="Fomentamos un ambiente de trabajo colaborativo…"
+                ></textarea>
+              </div>
+
             </div>
           </div>
-        </form>
-      </div>
-    </div>
 
-    <!-- Botones Finales -->
-    <div class="d-flex justify-content-end gap-3 mt-4">
-      <button class="btn-cancel" (click)="cancelar()" *ngIf="modoEdicion">Descartar cambios</button>
-      <button class="boton-primario" (click)="toggleEdicion()" *ngIf="!modoEdicion">
-        Editar Información
-      </button>
-      <button class="boton-primario" (click)="guardarCambios()" *ngIf="modoEdicion" [disabled]="!camposModificados || guardando">
-        <span *ngIf="guardando" class="spinner-border spinner-border-sm me-2"></span>
-        Guardar Perfil Institucional
-      </button>
+        </form>
+
+        <!-- ── Botones finales ─────────────────────────────── -->
+        <div class="pe-footer-actions">
+          <button class="btn pe-btn-secondary" (click)="cancelarCambios()" [disabled]="guardando">
+            Cancelar
+          </button>
+          <button class="btn pe-btn-primary" (click)="guardarCambios()" [disabled]="guardando">
+            <span *ngIf="guardando" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            <i *ngIf="!guardando" class="bi bi-floppy me-1"></i>
+            {{ guardando ? 'Guardando…' : 'Guardar Cambios' }}
+          </button>
+        </div>
+
+      </div>
+      <!-- /pe-col-right -->
+
     </div>
+    <!-- /pe-grid -->
+
   </div>
 </section>
 
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL CAMBIAR LOGO
+     ══════════════════════════════════════════════════════════════ -->
+<div class="pe-modal-backdrop" *ngIf="mostrarModalLogo" (click)="cerrarModalLogo()"></div>
+
+<div class="pe-modal-wrap" *ngIf="mostrarModalLogo" role="dialog" aria-modal="true">
+  <div class="pe-modal" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="pe-modal-header">
+      <div class="pe-modal-icon">
+        <i class="bi bi-image pe-accent"></i>
+      </div>
+      <div>
+        <h5 class="pe-modal-title">Actualizar logo de empresa</h5>
+        <p class="pe-modal-sub">Pega el enlace de la imagen que deseas usar como logo.</p>
+      </div>
+      <button class="pe-modal-close" (click)="cerrarModalLogo()" aria-label="Cerrar">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="pe-modal-body">
+
+      <!-- Preview -->
+      <div class="text-center mb-4">
+        <img
+          *ngIf="logoPreviewModal"
+          [src]="logoPreviewModal"
+          alt="Vista previa"
+          class="pe-logo-preview-img"
+          (error)="logoPreviewModal = ''"
+        />
+        <div
+          *ngIf="!logoPreviewModal"
+          class="pe-logo-preview-fallback"
+        >{{ iniciales }}</div>
+      </div>
+
+      <label class="pe-label">URL de la imagen</label>
+      <input
+        type="url"
+        class="form-control pe-input"
+        [(ngModel)]="logoUrlInput"
+        (input)="onLogoUrlChange()"
+        placeholder="https://ejemplo.com/logo.jpg"
+      />
+      <small class="text-secondary mt-2 d-block" style="font-size:0.8rem;">
+        Usa un enlace directo a una imagen JPG, PNG o WEBP.
+      </small>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="pe-modal-footer">
+      <button class="btn pe-btn-secondary" (click)="cerrarModalLogo()">Cancelar</button>
+      <button class="btn pe-btn-primary" (click)="guardarLogo()">
+        <i class="bi bi-floppy me-1"></i> Guardar foto
+      </button>
+    </div>
+
+  </div>
+</div>

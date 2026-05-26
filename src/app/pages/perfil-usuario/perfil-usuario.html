@@ -135,7 +135,7 @@
               <div class="col-md-6">
                 <label class="form-label-custom">Correo Electrónico</label>
                 <input type="email" class="form-control-custom" [(ngModel)]="emailInput"
-                       readonly>
+                       (ngModelChange)="actualizarResumen()">
               </div>
               <div class="col-md-6">
                 <label class="form-label-custom">Teléfono Móvil</label>
