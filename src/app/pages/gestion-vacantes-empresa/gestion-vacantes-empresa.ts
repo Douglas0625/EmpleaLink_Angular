@@ -26,13 +26,13 @@ interface Stats {
 }
 
 @Component({
-  selector: 'app-gestion-vacantes',
+  selector: 'app-gestion-vacantes-empresa',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './gestion-vacantes-empresa.html',
   styleUrl: './gestion-vacantes-empresa.css'
 })
-export class GestionVacantes implements OnInit {
+export class GestionVacantesEmpresa implements OnInit {
   // Datos
   vacantes: Vacante[] = [];
   vacantesFiltradas: Vacante[] = [];

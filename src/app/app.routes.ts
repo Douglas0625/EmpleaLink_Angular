@@ -13,7 +13,8 @@ import { Postulaciones } from './pages/postulaciones/postulaciones';
 import { Foro } from './pages/foro/foro';
 import { GestionUsuarios } from './pages/gestion-usuarios/gestion-usuarios';
 import { GestionEmpresas } from './pages/gestion-empresas/gestion-empresas';
-import { GestionVacantes } from './pages/gestion-vacantes-empresa/gestion-vacantes-empresa';
+import { GestionVacantes } from './pages/gestion-vacantes/gestion-vacantes';
+import { GestionVacantesEmpresa } from './pages/gestion-vacantes-empresa/gestion-vacantes-empresa';
 import { Moderacion } from './pages/moderacion/moderacion';
 import { authGuard } from './guards/auth-guard';
 import { adminGuard } from './guards/admin-guard';
@@ -36,6 +37,7 @@ export const routes: Routes = [
   { path: 'gestion-usuarios', component: GestionUsuarios, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-empresas', component: GestionEmpresas, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-vacantes', component: GestionVacantes, canActivate: [authGuard, adminGuard] },
+  { path: 'gestion-vacantes-empresa', component: GestionVacantesEmpresa, canActivate: [authGuard, empresaGuard] },
   { path: 'moderacion', component: Moderacion, canActivate: [authGuard, adminGuard] },
   { path: '**', redirectTo: 'login' }
 ];
