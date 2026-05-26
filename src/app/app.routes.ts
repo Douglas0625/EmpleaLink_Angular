@@ -15,21 +15,15 @@ import { GestionEmpresas } from './pages/gestion-empresas/gestion-empresas';
 import { GestionVacantes } from './pages/gestion-vacantes/gestion-vacantes';
 import { GestionVacantesEmpresa } from './pages/gestion-vacantes-empresa/gestion-vacantes-empresa';
 import { Moderacion } from './pages/moderacion/moderacion';
-<<<<<<< HEAD
 import { GestionOfertas } from './pages/gestion-ofertas/gestion-ofertas';
-import { empresaGuard } from './guards/empresa-guard';
 import { authGuard }    from './guards/auth-guard';
-=======
-import { authGuard } from './guards/auth-guard';
 import { adminGuard } from './guards/admin-guard';
 import { empresaGuard } from './guards/empresa-guard';
 import { candidatoGuard } from './guards/usuario-guard';
->>>>>>> main
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-<<<<<<< HEAD
   { path: 'dashboard-admin', component: DashboardAdmin },
   { path: 'dashboard-empresa', component: DashboardEmpresa },
   { path: 'dashboard-usuario', component: DashboardUsuario },
@@ -44,8 +38,6 @@ export const routes: Routes = [
   { path: 'gestion-empresas', component: GestionEmpresas },
   { path: 'gestion-vacantes', component: GestionVacantes },
   { path: 'moderacion', component: Moderacion },
-=======
-  { path: 'registro', component: Registro },
   { path: 'ofertas', component: OfertasComponent },
   { path: 'ofertas/:id', component: DetalleOferta },
   { path: 'dashboard-usuario', component: DashboardUsuario, canActivate: [authGuard, candidatoGuard] },
@@ -60,6 +52,5 @@ export const routes: Routes = [
   { path: 'gestion-vacantes', component: GestionVacantes, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-vacantes-empresa', component: GestionVacantesEmpresa, canActivate: [authGuard, empresaGuard] },
   { path: 'moderacion', component: Moderacion, canActivate: [authGuard, adminGuard] },
->>>>>>> main
   { path: '**', redirectTo: 'login' }
 ];
