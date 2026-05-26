@@ -1,1 +1,501 @@
-<p>perfil-usuario works!</p>
+<div style="background-color:#f4f5f8; min-height:100vh;">
+
+  <section class="pt-4 pb-3">
+    <div class="container">
+      <a routerLink="/dashboard-usuario" class="link-volver mb-3 d-inline-flex">
+        <i class="bi bi-arrow-left"></i> Volver al Dashboard
+      </a>
+      <h1 class="titulos mb-2">Mi Perfil <span class="text-azul">Profesional</span></h1>
+      <p class="subtitulos fuente-inter">Gestiona tu información para destacar ante los reclutadores.</p>
+    </div>
+  </section>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border" style="color:#554DEF;"></div>
+    <p class="mt-2 text-secondary">Cargando perfil...</p>
+  </div>
+
+  <section class="py-2" *ngIf="!loading">
+    <div class="container">
+      <div class="row g-4">
+
+        <!-- SIDEBAR -->
+        <div class="col-lg-4">
+
+          <!-- Foto + info -->
+          <div class="perfil-card py-5 px-4">
+            <div class="sidebar-profile-header">
+              <div class="d-inline-block position-relative">
+                <img *ngIf="fotoValida" [src]="fotoUrl" alt="Foto"
+                     class="sidebar-profile-img"
+                     (error)="fotoValida = false">
+                <div *ngIf="!fotoValida"
+                     class="sidebar-profile-img d-flex align-items-center justify-content-center fw-bold"
+                     style="background:#eef2ff;color:#554DEF;font-size:42px;">
+                  {{ iniciales }}
+                </div>
+                <div class="sidebar-edit-icon"
+                     data-bs-toggle="modal" data-bs-target="#modalFotoPerfil">
+                  <i class="bi bi-plus" style="font-size:20px;"></i>
+                </div>
+              </div>
+              <h2 class="profile-name-sidebar">{{ nombreResumen }}</h2>
+              <p class="profile-role-sidebar">{{ tituloResumen }}</p>
+              <p class="profile-location-sidebar">
+                <i class="bi bi-geo-alt me-1"></i>{{ ubicacionResumen }}
+              </p>
+            </div>
+
+            <div class="mb-4">
+              <div class="contact-item-box">
+                <i class="bi bi-envelope"></i>
+                <p class="contact-item-text">{{ emailResumen }}</p>
+              </div>
+              <div class="contact-item-box">
+                <i class="bi bi-telephone"></i>
+                <p class="contact-item-text">{{ telefonoResumen }}</p>
+              </div>
+              <div class="contact-item-box">
+                <i class="bi bi-linkedin"></i>
+                <p class="contact-item-text">{{ linkedinResumen }}</p>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button class="btn-upload-cv"
+                      data-bs-toggle="modal" data-bs-target="#modalCvUsuario">
+                <i class="bi bi-upload"></i> Actualizar CV
+              </button>
+              <button class="btn-download-cv" (click)="descargarCV()">
+                <i class="bi bi-download"></i> Descargar CV Actual
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="perfil-card">
+            <h4 class="stats-title p-4">ESTADÍSTICAS</h4>
+            <div class="row g-3 px-4 pb-4">
+              <div class="col-6">
+                <div class="stat-grid-item v-1">
+                  <i class="bi bi-briefcase icon"></i>
+                  <span class="number">{{ statPostulaciones }}</span>
+                  <span class="label">Postulaciones</span>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="stat-grid-item v-2">
+                  <i class="bi bi-file-earmark-text icon"></i>
+                  <span class="number">{{ statEntrevistas }}</span>
+                  <span class="label">Entrevistas</span>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="stat-grid-item v-3">
+                  <i class="bi bi-star icon"></i>
+                  <span class="number">{{ statGuardados }}</span>
+                  <span class="label">Guardados</span>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="stat-grid-item v-4">
+                  <i class="bi bi-bookmark-x icon"></i>
+                  <span class="number">{{ statRechazos }}</span>
+                  <span class="label">Rechazos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="col-lg-8">
+
+          <!-- Información Personal -->
+          <div class="perfil-card p-4">
+            <div class="section-header">
+              <div class="section-icon"><i class="bi bi-person"></i></div>
+              <div class="section-title">
+                <h3>Información Personal</h3>
+                <p>Tus datos básicos de contacto</p>
+              </div>
+            </div>
+            <div class="row g-4 mb-3">
+              <div class="col-md-6">
+                <label class="form-label-custom">Nombres</label>
+                <input type="text" class="form-control-custom" [(ngModel)]="nombreInput"
+                       (ngModelChange)="actualizarResumen()">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Apellidos</label>
+                <input type="text" class="form-control-custom" [(ngModel)]="apellidoInput"
+                       (ngModelChange)="actualizarResumen()">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Correo Electrónico</label>
+                <input type="email" class="form-control-custom" [(ngModel)]="emailInput"
+                       (ngModelChange)="actualizarResumen()">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Teléfono Móvil</label>
+                <input type="text" class="form-control-custom" [(ngModel)]="telefonoInput"
+                       (ngModelChange)="actualizarResumen()">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Ubicación</label>
+                <input type="text" class="form-control-custom" [(ngModel)]="ubicacionInput"
+                       (ngModelChange)="actualizarResumen()">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Enlace profesional</label>
+                <input type="url" class="form-control-custom" [(ngModel)]="linkedinInput"
+                       placeholder="https://linkedin.com/in/tu-perfil"
+                       (ngModelChange)="actualizarResumen()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Perfil Profesional -->
+          <div class="perfil-card p-4">
+            <div class="section-header">
+              <div class="section-icon"><i class="bi bi-file-earmark-person"></i></div>
+              <div class="section-title">
+                <h3>Perfil Profesional</h3>
+                <p>Define tu especialidad y metas</p>
+              </div>
+            </div>
+            <div class="row g-4">
+              <div class="col-12">
+                <label class="form-label-custom">Título Profesional</label>
+                <input type="text" class="form-control-custom" [(ngModel)]="tituloInput"
+                       (ngModelChange)="actualizarResumen()">
+              </div>
+              <div class="col-12">
+                <label class="form-label-custom">Resumen Profesional</label>
+                <textarea class="form-control-custom" rows="4" [(ngModel)]="resumenInput"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Experiencia Laboral -->
+          <div class="perfil-card p-4">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+              <div class="section-header mb-0">
+                <div class="section-icon"><i class="bi bi-briefcase"></i></div>
+                <div class="section-title">
+                  <h3>Experiencia Laboral</h3>
+                  <p>Tu trayectoria profesional</p>
+                </div>
+              </div>
+              <button class="btn-add" data-bs-toggle="modal" data-bs-target="#modalExperiencia">
+                <i class="bi bi-plus"></i> Agregar
+              </button>
+            </div>
+
+            <div *ngIf="experiencias.length === 0">
+              <div class="exp-box"><p class="mb-0">Aún no has agregado experiencia laboral.</p></div>
+            </div>
+            <div *ngFor="let exp of experiencias" class="exp-box">
+              <h4 class="exp-title">{{ exp.job_title || 'Sin puesto' }}</h4>
+              <p class="exp-company">{{ exp.company_name || 'Sin empresa' }}</p>
+              <p class="exp-date">{{ formatearRango(exp.start_date, exp.end_date, exp.is_current) }}</p>
+              <p class="exp-desc">{{ exp.description || 'Sin descripción' }}</p>
+            </div>
+          </div>
+
+          <!-- Educación y Habilidades -->
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="perfil-card h-100 mb-0 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-book text-azul fs-5"></i>
+                    <h3 class="mb-0" style="font-family:'Inter',sans-serif;font-size:16px;font-weight:600;">Educación</h3>
+                  </div>
+                  <i class="bi bi-plus text-azul fs-5" style="cursor:pointer;"
+                     data-bs-toggle="modal" data-bs-target="#modalEducacion"></i>
+                </div>
+                <div *ngIf="educacion.length === 0">
+                  <div class="edu-item"><p class="edu-title">Aún no has agregado estudios.</p></div>
+                </div>
+                <div *ngFor="let edu of educacion" class="edu-item">
+                  <p class="edu-title">{{ obtenerNombreGrado(edu.degree_id, edu.custom_degree_name) }}</p>
+                  <p class="edu-school">{{ edu.institution || 'Sin institución' }}</p>
+                  <p class="edu-date mb-0">{{ formatearRango(edu.start_date, edu.end_date, edu.is_current) }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="perfil-card h-100 mb-0 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-wrench text-azul fs-5"></i>
+                    <h3 class="mb-0" style="font-family:'Inter',sans-serif;font-size:16px;font-weight:600;">Habilidades</h3>
+                  </div>
+                  <i class="bi bi-plus text-azul fs-5" style="cursor:pointer;"
+                     data-bs-toggle="modal" data-bs-target="#modalHabilidades"></i>
+                </div>
+                <div class="skills-container">
+                  <span *ngIf="profileSkills.length === 0" class="skill-badge">Sin habilidades</span>
+                  <span *ngFor="let ps of profileSkills" class="skill-badge">
+                    {{ obtenerNombreSkill(ps.skill_id) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alertas -->
+          <div class="perfil-card mt-4 p-4">
+            <div class="section-header">
+              <div class="section-icon"><i class="bi bi-bell"></i></div>
+              <div class="section-title">
+                <h3>Alertas de Empleo</h3>
+                <p>Configura tus avisos por correo</p>
+              </div>
+            </div>
+            <div class="alert-box">
+              <div class="flex-grow-1" style="max-width:300px;">
+                <label class="form-label-custom" style="font-size:11px;">Palabras Clave</label>
+                <input type="text" class="form-control-custom" placeholder="Ej. Senior Designer"
+                       [(ngModel)]="alertaKeywords">
+              </div>
+              <div class="flex-grow-1">
+                <label class="form-label-custom" style="font-size:11px;">Modalidad</label>
+                <div class="checkbox-group">
+                  <label class="custom-checkbox">
+                    <input type="checkbox" [(ngModel)]="alertaRemote"> Remoto
+                  </label>
+                  <label class="custom-checkbox">
+                    <input type="checkbox" [(ngModel)]="alertaOnsite"> Presencial
+                  </label>
+                  <label class="custom-checkbox">
+                    <input type="checkbox" [(ngModel)]="alertaHybrid"> Híbrido
+                  </label>
+                </div>
+              </div>
+              <div class="switch-container">
+                <label class="switch">
+                  <input type="checkbox" [(ngModel)]="alertaActiva">
+                  <span class="slider"></span>
+                </label>
+                <span class="switch-label mt-1">Activo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones guardar -->
+          <div class="form-actions">
+            <button class="btn-cancel-form" (click)="cancelar()">Cancelar</button>
+            <button class="btn-save-form" (click)="guardarPerfil()">Guardar Cambios</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL EXPERIENCIA -->
+  <div class="modal fade" id="modalExperiencia" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-content-custom">
+        <div class="modal-header modal-header-custom">
+          <div class="d-flex align-items-center gap-3 w-100">
+            <div class="modal-icon-circle"><i class="bi bi-check-circle"></i></div>
+            <div>
+              <h5 class="modal-title-custom">Agregar Experiencia Laboral</h5>
+              <p class="modal-subtitle-custom">Completa los detalles de tu experiencia laboral.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body modal-body-custom">
+          <div class="mb-3">
+            <label class="form-label-custom">Empresa</label>
+            <input type="text" class="form-control-custom" placeholder="Ej. Google" [(ngModel)]="expEmpresa">
+          </div>
+          <div class="mb-3">
+            <label class="form-label-custom">Puesto</label>
+            <input type="text" class="form-control-custom" placeholder="Ej. Sr Dev" [(ngModel)]="expPuesto">
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-6">
+              <label class="form-label-custom">Fecha de inicio</label>
+              <input type="date" class="form-control-custom" [(ngModel)]="expFechaInicio">
+            </div>
+            <div class="col-6">
+              <label class="form-label-custom">Fecha de fin</label>
+              <input type="date" class="form-control-custom" [(ngModel)]="expFechaFin" [disabled]="expActual">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="custom-checkbox">
+              <input type="checkbox" [(ngModel)]="expActual"> Actualmente estoy trabajando aquí
+            </label>
+          </div>
+          <div class="mb-0">
+            <label class="form-label-custom">Descripción</label>
+            <textarea class="form-control-custom" rows="4" [(ngModel)]="expDescripcion"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn-save" (click)="guardarExperiencia()">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDUCACIÓN -->
+  <div class="modal fade" id="modalEducacion" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-content-custom">
+        <div class="modal-header modal-header-custom">
+          <div class="d-flex align-items-center gap-3 w-100">
+            <div class="modal-icon-circle"><i class="bi bi-check-circle"></i></div>
+            <div>
+              <h5 class="modal-title-custom">Agregar Educación</h5>
+              <p class="modal-subtitle-custom">Comparte los detalles de tu formación académica.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body modal-body-custom">
+          <div class="mb-3">
+            <label class="form-label-custom">Institución</label>
+            <input type="text" class="form-control-custom" placeholder="Ej. Universidad Católica"
+                   [(ngModel)]="eduInstitucion">
+          </div>
+          <div class="mb-3">
+            <label class="form-label-custom">Grado</label>
+            <select class="form-control-custom" [(ngModel)]="eduGradoId">
+              <option value="">Selecciona un grado</option>
+              <option *ngFor="let g of grados" [value]="g.id">{{ g.degree_name }}</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label-custom">Título personalizado</label>
+            <input type="text" class="form-control-custom" placeholder="Ej. Ingeniería en Sistemas"
+                   [(ngModel)]="eduTituloPersonalizado">
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-6">
+              <label class="form-label-custom">Fecha de inicio</label>
+              <input type="date" class="form-control-custom" [(ngModel)]="eduFechaInicio">
+            </div>
+            <div class="col-6">
+              <label class="form-label-custom">Fecha de fin</label>
+              <input type="date" class="form-control-custom" [(ngModel)]="eduFechaFin" [disabled]="eduActual">
+            </div>
+          </div>
+          <div class="mb-0">
+            <label class="custom-checkbox">
+              <input type="checkbox" [(ngModel)]="eduActual"> Actualmente estudio aquí
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn-save" (click)="guardarEducacion()">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL HABILIDADES -->
+  <div class="modal fade" id="modalHabilidades" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-content-custom">
+        <div class="modal-header modal-header-custom">
+          <div class="d-flex align-items-center gap-3 w-100">
+            <div class="modal-icon-circle"><i class="bi bi-check-circle"></i></div>
+            <div>
+              <h5 class="modal-title-custom">Agregar Habilidad</h5>
+              <p class="modal-subtitle-custom">Selecciona una habilidad para tu perfil.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body modal-body-custom">
+          <label class="form-label-custom" style="font-size:15px;font-weight:600;">Habilidad</label>
+          <select class="form-control-custom mt-2" [(ngModel)]="habilidadSeleccionada">
+            <option value="">Selecciona una habilidad</option>
+            <option *ngFor="let s of skills" [value]="s.id">{{ s.skill_name }}</option>
+          </select>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn-save" (click)="guardarHabilidad()">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FOTO -->
+  <div class="modal fade" id="modalFotoPerfil" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-content-custom">
+        <div class="modal-header modal-header-custom">
+          <div class="d-flex align-items-center gap-3 w-100">
+            <div class="modal-icon-circle"><i class="bi bi-image"></i></div>
+            <div>
+              <h5 class="modal-title-custom">Actualizar foto de perfil</h5>
+              <p class="modal-subtitle-custom">Pega el enlace de una imagen.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body modal-body-custom">
+          <div class="text-center mb-4">
+            <img [src]="fotoUrlModal || 'https://ui-avatars.com/api/?name=Usuario&background=random'"
+                 alt="Vista previa" class="rounded-circle"
+                 style="width:120px;height:120px;object-fit:cover;border:4px solid #eef2ff;">
+          </div>
+          <div class="mb-3">
+            <label class="form-label-custom">URL de la imagen</label>
+            <input type="url" class="form-control" [(ngModel)]="fotoUrlModal"
+                   placeholder="https://ejemplo.com/mi-foto.jpg">
+          </div>
+          <p class="subtexto fuente-inter mb-0" style="font-size:13px;">
+            Usa un enlace directo a una imagen JPG, PNG o WEBP.
+          </p>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn-save" (click)="guardarFoto()">Guardar foto</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CV -->
+  <div class="modal fade" id="modalCvUsuario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-content-custom">
+        <div class="modal-header modal-header-custom">
+          <div class="d-flex align-items-center gap-3 w-100">
+            <div class="modal-icon-circle"><i class="bi bi-file-earmark-arrow-up"></i></div>
+            <div>
+              <h5 class="modal-title-custom">Actualizar CV</h5>
+              <p class="modal-subtitle-custom">Pega el enlace del CV actual.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body modal-body-custom">
+          <div class="mb-3">
+            <label class="form-label-custom">URL del CV</label>
+            <input type="url" class="form-control" [(ngModel)]="cvUrlModal"
+                   placeholder="https://ejemplo.com/mi-cv.pdf">
+          </div>
+          <p class="subtexto fuente-inter mb-0" style="font-size:13px;">
+            Usa un enlace directo al archivo PDF de tu CV.
+          </p>
+        </div>
+        <div class="modal-footer modal-footer-custom">
+          <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn-save" (click)="guardarCV()">Guardar CV</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
