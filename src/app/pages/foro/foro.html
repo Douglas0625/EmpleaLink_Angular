@@ -1,1 +1,237 @@
-<p>foro works!</p>
+<div class="bg-gris">
+  <div class="container">
+
+    <!-- HEADER -->
+    <section id="header">
+      <h1 class="titulos mt-4 mb-3">Foro y <span class="text-azul">Noticias</span></h1>
+      <p class="subtitulos fuente-inter mb-3">
+        Mantente informado con las últimas noticias del mercado laboral, consejos de carrera y debates en nuestro foro.
+      </p>
+    </section>
+
+    <section class="bg-gris py-4">
+      <div class="container">
+
+        <!-- LOADING -->
+        <div *ngIf="loading" class="text-center py-5">
+          <div class="spinner-border" style="color:#554DEF;"></div>
+          <p class="mt-2 text-secondary">Cargando foro...</p>
+        </div>
+
+        <!-- POSTS -->
+        <div *ngIf="!loading">
+          <div *ngFor="let post of postsPagina" class="bg-white foro-card-principal mb-4">
+
+            <!-- CABECERA DEL POST -->
+            <div class="p-4 border-bottom">
+              <div class="d-flex justify-content-between align-items-start mb-4">
+                <div class="d-flex gap-3 align-items-start">
+                  <div class="avatar-foro">
+                    <img [src]="post.imagenAutor"
+                         [alt]="post.nombreAutor"
+                         class="img-fluid rounded-circle"
+                         style="width:48px;height:48px;object-fit:cover;"
+                         onerror="this.src='https://ui-avatars.com/api/?name=Usuario&background=random'">
+                  </div>
+                  <div>
+                    <div class="subtexto fuente-inter text-dark mb-0 fw-semibold">{{ post.nombreAutor }}</div>
+                    <div class="d-flex gap-2 align-items-center flex-wrap">
+                      <span class="texto-mini text-azul fw-semibold">{{ post.rolAutor }}</span>
+                      <span class="texto-mini">•</span>
+                      <span class="texto-mini">{{ post.tiempoFormateado }}</span>
+                    </div>
+                  </div>
+                </div>
+                <span *ngIf="post.esOficial" class="badge-etiqueta-oficial">OFICIAL</span>
+              </div>
+
+              <h1 class="titulo-card fuente-inter fw-bold titulo-post-foro mb-2">{{ post.title || 'Sin título' }}</h1>
+              <p class="subtexto mb-0">{{ post.content || 'Sin contenido' }}</p>
+            </div>
+
+            <!-- CONTADOR COMENTARIOS -->
+            <div class="p-4 border-bottom">
+              <div class="d-flex gap-4 flex-wrap">
+                <div class="d-flex align-items-center gap-2 texto-mini">
+                  <i class="bi bi-chat"></i>
+                  <span>{{ post.totalComentarios }} comentario{{ post.totalComentarios === 1 ? '' : 's' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMENTARIOS -->
+            <div class="p-4">
+
+              <!-- Sin comentarios -->
+              <div *ngIf="post.comentariosPadre.length === 0" class="text-center py-3">
+                <p class="subtexto mb-0">Aún no hay comentarios. Sé la primera persona en comentar.</p>
+              </div>
+
+              <!-- Lista de comentarios -->
+              <div *ngFor="let comentario of post.comentariosPadre" class="d-flex gap-3 align-items-start mb-4">
+                <div class="avatar-comentario">
+                  <img [src]="comentario.autorInfo.imagen"
+                       class="img-fluid rounded-circle"
+                       style="width:32px;height:32px;object-fit:cover;"
+                       onerror="this.src='https://ui-avatars.com/api/?name=Usuario&background=random'">
+                </div>
+                <div class="flex-grow-1">
+                  <div class="comentario-box">
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-1">
+                      <div>
+                        <div class="titulo-seccion fw-semibold">{{ comentario.autorInfo.nombre }}</div>
+                        <div *ngIf="comentario.autorInfo.rol"
+                             class="texto-mini"
+                             [class.text-azul]="comentario.autorInfo.esAdmin"
+                             [class.fw-semibold]="comentario.autorInfo.esAdmin">
+                          {{ comentario.autorInfo.rol }}
+                        </div>
+                      </div>
+                      <span class="texto-mini">{{ comentario.tiempoFormateado }}</span>
+                    </div>
+                    <p class="subtexto mb-0">{{ comentario.content }}</p>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-3 mt-2">
+                    <button class="boton-responder"
+                            type="button"
+                            (click)="abrirModalResponder(post.id, comentario.id)">
+                      Responder
+                    </button>
+                    <button class="btn btn-link btn-sm p-0 text-danger text-decoration-none"
+                            type="button"
+                            (click)="abrirModalReportar(comentario.id)">
+                      Reportar
+                    </button>
+                  </div>
+
+                  <!-- Respuestas -->
+                  <div *ngFor="let respuesta of comentario.respuestas"
+                       class="d-flex gap-2 align-items-start ms-2 mt-3">
+                    <i class="bi bi-arrow-return-right texto-mini mt-2"></i>
+                    <div class="respuesta-admin-box flex-grow-1">
+                      <div class="d-flex justify-content-between align-items-start gap-3 mb-1">
+                        <div>
+                          <div class="texto-mini fw-semibold"
+                               [class.text-azul]="respuesta.autorInfo.esAdmin">
+                            {{ respuesta.autorInfo.nombre }}
+                          </div>
+                          <div *ngIf="respuesta.autorInfo.rol" class="texto-mini">
+                            {{ respuesta.autorInfo.rol }}
+                          </div>
+                        </div>
+                        <span class="texto-mini">{{ respuesta.tiempoFormateado }}</span>
+                      </div>
+                      <p class="subtexto mb-0">{{ respuesta.content }}</p>
+                      <div class="mt-2">
+                        <button class="btn btn-link btn-sm p-0 text-danger text-decoration-none"
+                                type="button"
+                                (click)="abrirModalReportar(respuesta.id)">
+                          Reportar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- INPUT NUEVO COMENTARIO -->
+              <div class="d-flex gap-3 align-items-start mt-5">
+                <div class="avatar-comentario">
+                  <img [src]="imagenSesion" class="img-fluid rounded-circle"
+                       style="width:32px;height:32px;object-fit:cover;"
+                       onerror="this.src='https://ui-avatars.com/api/?name=Usuario&background=random'">
+                </div>
+                <div class="flex-grow-1">
+                  <div class="comentario-input-box d-flex align-items-center justify-content-between gap-3">
+                    <input type="text"
+                           class="input-comentario subtexto"
+                           placeholder="Escribe un comentario..."
+                           [(ngModel)]="inputsComentario[post.id]"
+                           (keyup.enter)="publicarComentario(post.id)">
+                    <button class="boton-enviar-comentario" type="button"
+                            (click)="publicarComentario(post.id)">
+                      <i class="bi bi-send"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- fin post -->
+
+          <!-- PAGINACIÓN -->
+          <nav class="mt-4" *ngIf="totalPaginas > 1">
+            <ul class="pagination justify-content-center">
+              <li class="page-item" [class.disabled]="paginaActual === 1">
+                <button class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</button>
+              </li>
+              <li *ngFor="let p of paginas" class="page-item" [class.active]="p === paginaActual">
+                <button class="page-link" (click)="cambiarPagina(p)">{{ p }}</button>
+              </li>
+              <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+                <button class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</button>
+              </li>
+            </ul>
+          </nav>
+
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- MODAL RESPONDER -->
+  <div class="modal fade" id="modalResponder" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content modal-respuesta">
+        <div class="modal-body p-0">
+          <div class="comentario-input-box d-flex align-items-end justify-content-between gap-3">
+            <textarea class="input-comentario-modal subtexto"
+                      placeholder="Escribe un comentario..."
+                      [(ngModel)]="textoRespuesta"></textarea>
+            <button class="boton-enviar-comentario" type="button" (click)="publicarRespuesta()">
+              <i class="bi bi-send"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL REPORTAR -->
+  <div class="modal fade" id="modalReportarComentario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title">Reportar comentario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body pt-3">
+          <div class="mb-3">
+            <label class="form-label">Motivo</label>
+            <select class="form-select" [(ngModel)]="motivoReporteSeleccionado">
+              <option value="">Selecciona un motivo</option>
+              <option *ngFor="let m of motivosReporte" [value]="m.id">
+                {{ obtenerNombreMotivo(m) }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-0">
+            <label class="form-label">Detalle</label>
+            <textarea class="form-control" rows="4"
+                      placeholder="Explica por qué estás reportando este comentario..."
+                      [(ngModel)]="detalleReporte"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" (click)="enviarReporte()">Enviar reporte</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>

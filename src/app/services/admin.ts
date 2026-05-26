@@ -38,4 +38,28 @@ export class AdminService {
   postResource(data: any): Observable<any> {
     return this.http.post(`${API_URL}/resources`, data);
   }
+  getComments(): Observable<any> {
+    return this.http.get(`${API_URL}/forum/comments`);
+  }
+  getPosts(): Observable<any> {
+    return this.http.get(`${API_URL}/forum/posts`);
+  }
+  deleteReport(reportId: number): Observable<any> {
+    return this.http.delete(`${API_URL}/forum/reports/${reportId}`);
+  }
+  postComment(data: any): Observable<any> {
+    return this.http.post(`${API_URL}/forum/comments`, data);
+  }
+  postReport(data: any): Observable<any> {
+    return this.http.post(`${API_URL}/forum/reports`, data);
+  }
+  getResources(): Observable<any> {
+    return this.http.get(`${API_URL}/resources`);
+  }
+  getCompanyReviews(): Observable<any> {
+    return this.http.get(`${API_URL}/company-reviews`);
+  }
+  postCompanyReview(data: any): Observable<any> {
+    return this.http.post(`${API_URL}/company-reviews`, data);
+  }
 }

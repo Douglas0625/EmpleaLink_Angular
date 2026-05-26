@@ -1,1 +1,202 @@
-<p>dashboard-usuario works!</p>
+<div style="background-color:#f4f5f8; min-height:100vh;">
+
+  <!-- HEADER -->
+  <section class="pt-4 pb-3">
+    <div class="container">
+      <h1 class="titulos mb-2">
+        ¡Hola, <span class="text-azul">{{ primerNombre }}</span>!
+      </h1>
+      <p class="subtitulos fuente-inter">
+        Gestiona tu perfil, revisa tus postulaciones y descubre nuevas oportunidades profesionales.
+      </p>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="py-3">
+    <div class="container">
+      <div class="row g-4">
+
+        <div class="col-lg-3 col-md-6">
+          <div class="top-stat-card">
+            <div class="icon-box"><i class="bi bi-briefcase"></i></div>
+            <div class="stat-info">
+              <p class="stat-title">Postulaciones</p>
+              <p class="stat-value">{{ statPostulaciones }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="top-stat-card">
+            <div class="icon-box"><i class="bi bi-bell"></i></div>
+            <div class="stat-info">
+              <p class="stat-title">Entrevistas</p>
+              <p class="stat-value">{{ statEntrevistas }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="top-stat-card">
+            <div class="icon-box"><i class="bi bi-star"></i></div>
+            <div class="stat-info">
+              <p class="stat-title">Ofertas Guardadas</p>
+              <p class="stat-value">{{ statGuardadas }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="top-stat-card">
+            <div class="icon-box"><i class="bi bi-graph-up"></i></div>
+            <div class="stat-info">
+              <p class="stat-title">Comentarios en Foro</p>
+              <p class="stat-value">{{ statComentarios }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border" style="color:#554DEF;"></div>
+    <p class="mt-2 text-secondary">Cargando dashboard...</p>
+  </div>
+
+  <!-- MAIN -->
+  <section class="py-4 mb-5" *ngIf="!loading">
+    <div class="container">
+      <div class="row g-4">
+
+        <!-- COLUMNA IZQUIERDA: Perfil + Postulaciones -->
+        <div class="col-lg-3">
+
+          <!-- Profile Card -->
+          <div class="profile-card-full mb-4">
+            <div class="profile-img-container">
+              <img [src]="fotoPerfil" alt="Perfil"
+                   onerror="this.src='https://ui-avatars.com/api/?name=Usuario&background=random'">
+              <div class="profile-badge-status"></div>
+            </div>
+            <h3 class="titulo-card mb-1 pb-1" style="font-weight:600;">{{ nombreCompleto }}</h3>
+            <p class="parrafos mb-4" style="font-size:13px;">{{ tituloUbicacion }}</p>
+
+            <button class="btn-primary-custom" routerLink="/perfil-usuario">
+              <i class="bi bi-person me-2"></i> Editar mi Perfil
+            </button>
+            <button class="btn-secondary-custom m-0" (click)="verCV()">
+              <i class="bi bi-file-earmark-text me-2"></i> Ver mi CV
+            </button>
+          </div>
+
+          <!-- Mis Postulaciones -->
+          <div class="profile-card-full p-4 text-start">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h3 class="titulo-card mb-0" style="font-weight:600;">Mis Postulaciones</h3>
+              <a routerLink="/postulaciones"
+                 class="text-azul text-decoration-none"
+                 style="font-size:12px;font-weight:500;font-family:'Inter',sans-serif;">
+                Ver todas
+              </a>
+            </div>
+
+            <div *ngIf="postulacionesRecientes.length === 0">
+              <p class="parrafos mb-0">Aún no tienes postulaciones.</p>
+            </div>
+
+            <div *ngFor="let p of postulacionesRecientes; let last = last"
+                 class="postulacion-item" [class.border-0]="last" [class.mb-0]="last">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <p class="postulacion-title">{{ p.titulo }}</p>
+                <span class="badge-status" [ngClass]="p.estadoInfo.clase">{{ p.estadoInfo.texto }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="postulacion-company">{{ p.empresa }}</span>
+                <span class="postulacion-date"><i class="bi bi-clock me-1"></i>{{ p.fecha }}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- COLUMNA CENTRAL: Foro -->
+        <div class="col-lg-5">
+          <div class="foro-card-wrap">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h3 class="titulo-card mb-1" style="font-weight:600;font-size:20px;">Foro EmpleaLink</h3>
+                <p class="parrafos mb-0" style="font-size:13px;">Novedades y avisos oficiales</p>
+              </div>
+              <button class="btn-outline-custom w-auto py-1 px-3" routerLink="/foro">
+                Ir al Foro
+              </button>
+            </div>
+
+            <div *ngIf="postsForoRecientes.length === 0">
+              <p class="parrafos mb-0">No hay publicaciones disponibles.</p>
+            </div>
+
+            <div *ngFor="let post of postsForoRecientes; let last = last"
+                 class="forum-item" [class.border-0]="last" [class.pb-0]="last" [class.mb-0]="last">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <span class="forum-tag">{{ post.category || 'OFICIAL' }}</span>
+                <span class="forum-date">{{ post.fechaFormateada }}</span>
+              </div>
+              <h4 class="titulo-card" style="font-weight:600;font-size:16px;">
+                {{ post.title || 'Sin título' }}
+              </h4>
+              <p class="parrafos mb-3">{{ post.contenidoCorto }}</p>
+              <div class="forum-author">
+                <img src="https://ui-avatars.com/api/?name=Admin+EmpleaLink&background=random"
+                     alt="Admin"
+                     onerror="this.src='https://ui-avatars.com/api/?name=Admin&background=random'">
+                <span>Admin EmpleaLink</span>
+              </div>
+              <div class="mt-2 text-muted" style="font-size:13px;">
+                💬 {{ post.cantidadComentarios }} comentario{{ post.cantidadComentarios === 1 ? '' : 's' }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: Para ti -->
+        <div class="col-lg-4">
+          <div class="para-ti-card-wrap">
+            <h3 class="titulo-card mb-1" style="font-weight:600;font-size:20px;">Para ti</h3>
+            <p class="parrafos mb-4" style="font-size:13px;">Basado en tu perfil</p>
+
+            <div *ngIf="ofertasRecomendadas.length === 0">
+              <p class="parrafos mb-3">No hay ofertas disponibles por ahora.</p>
+            </div>
+
+            <div *ngFor="let oferta of ofertasRecomendadas; let last = last"
+                 class="job-rec-item" [class.border-0]="last" [class.pb-0]="last" [class.mb-0]="last">
+              <h4 class="job-rec-title">{{ oferta.title || 'Oferta' }}</h4>
+              <p class="job-rec-company">
+                {{ oferta.location || 'Ubicación no especificada' }} • {{ oferta.modalidadTexto }}
+              </p>
+              <span class="tag-job mb-3">{{ oferta.tipoTexto }}</span>
+              <button class="btn-primary-custom w-100 m-0 mt-3" (click)="verOferta(oferta.id)">
+                Ver oferta
+              </button>
+            </div>
+
+            <button class="btn-secondary-custom w-100 mb-0 mt-3"
+                    style="border:1px solid #c9cffb;background-color:#f4f6ff !important;color:#5b6df6;"
+                    routerLink="/ofertas">
+              Explorar todas
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+ 
+
+</div>
