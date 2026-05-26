@@ -1,214 +1,512 @@
-<!-- Sección Principal -->
-<section class="py-5 dashboard-empresa-container">
-  <div class="container">
-    <!-- Encabezado -->
-    <div class="mb-5">
-      <h1 class="titulos text-azul mb-2">Panel de Empresa</h1>
-      <p class="parrafos">Gestiona tus vacantes, revisa candidatos y mantente al tanto de las novedades del portal.</p>
-    </div>
+<!-- ══════════════════════════════════════════════════════════════
+     LOADING SPINNER
+     ══════════════════════════════════════════════════════════════ -->
+<div *ngIf="cargando" class="de-loader-overlay">
+  <div class="de-spinner-wrap">
+    <div class="de-spinner"></div>
+    <p class="de-spinner-text">Cargando dashboard…</p>
+  </div>
+</div>
 
-    <!-- Botón crear oferta -->
-    <div class="mb-4 d-flex justify-content-end">
-      <button class="boton-primario">
-        <i class="bi bi-plus-lg"></i> Crear Nueva Oferta
-      </button>
-    </div>
+<!-- ══════════════════════════════════════════════════════════════
+     ERROR GLOBAL
+     ══════════════════════════════════════════════════════════════ -->
+<div *ngIf="!cargando && error" class="container py-5 text-center">
+  <div class="de-error-card mx-auto">
+    <i class="bi bi-exclamation-triangle-fill de-error-icon"></i>
+    <h4 class="mt-3 fw-bold">Algo salió mal</h4>
+    <p class="text-secondary">{{ error }}</p>
+    <button class="btn de-btn-primary mt-2" (click)="cargarDashboard()">
+      Reintentar
+    </button>
+  </div>
+</div>
 
-    <!-- Grid principal -->
-    <div class="row g-4">
-      <!-- Columna izquierda -->
-      <div class="col-lg-8">
-        <!-- Estadísticas -->
-        <div class="row g-3 mb-4">
-          <div class="col-md-6">
-            <div class="stat-card cards-container bg-white">
-              <div class="stat-icon">
-                <i class="bi bi-briefcase"></i>
-              </div>
-              <div>
-                <p class="stat-label texto-mini">VACANTES ACTIVAS</p>
-                <p class="stat-value">{{ cargandoStats ? '...' : stats.vacantesActivas }}</p>
-              </div>
-            </div>
+<!-- ══════════════════════════════════════════════════════════════
+     CONTENIDO PRINCIPAL
+     ══════════════════════════════════════════════════════════════ -->
+<ng-container *ngIf="!cargando && !error">
+
+  <!-- ── Cabecera ────────────────────────────────────────────── -->
+  <section class="de-hero">
+    <div class="container">
+
+      <!-- Título + Botón -->
+      <div class="de-hero-top">
+        <div>
+          <h1 class="de-hero-title">
+            Panel de <span class="de-accent">{{ empresaNombre }}</span>
+          </h1>
+          <p class="de-hero-sub">
+            Gestiona tus vacantes y revisa candidatos de {{ empresaNombre }}.
+          </p>
+        </div>
+        <button class="btn de-btn-primary de-btn-lg" (click)="abrirModal()">
+          <i class="bi bi-plus-lg me-1"></i> Crear Nueva Oferta
+        </button>
+      </div>
+
+      <!-- ── Estadísticas ──────────────────────────────────── -->
+      <div class="de-stats-grid">
+
+        <div class="de-stat-card">
+          <div class="de-stat-icon">
+            <i class="bi bi-suitcase-lg"></i>
           </div>
-          <div class="col-md-6">
-            <div class="stat-card cards-container bg-white">
-              <div class="stat-icon">
-                <i class="bi bi-people"></i>
-              </div>
-              <div>
-                <p class="stat-label texto-mini">TOTAL POSTULANTES</p>
-                <p class="stat-value">{{ cargandoStats ? '...' : stats.totalPostulantes }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="stat-card cards-container bg-white">
-              <div class="stat-icon">
-                <i class="bi bi-chat-dots"></i>
-              </div>
-              <div>
-                <p class="stat-label texto-mini">ENTREVISTAS</p>
-                <p class="stat-value">{{ cargandoStats ? '...' : stats.entrevistas }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="stat-card cards-container bg-white">
-              <div class="stat-icon">
-                <i class="bi bi-check-circle"></i>
-              </div>
-              <div>
-                <p class="stat-label texto-mini">VACANTES CERRADAS</p>
-                <p class="stat-value">{{ cargandoStats ? '...' : stats.vacantesCerradas }}</p>
-              </div>
-            </div>
+          <div>
+            <span class="de-stat-label">VACANTES ACTIVAS</span>
+            <p class="de-stat-num">{{ statVacantesActivas }}</p>
           </div>
         </div>
 
-        <!-- Mis Ofertas -->
-        <div class="cards-container bg-white mb-4">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="titulo-seccion">Mis Ofertas</h2>
-            <a class="enlace-primario" routerLink="/gestion-ofertas">Ver todas</a>
+        <div class="de-stat-card">
+          <div class="de-stat-icon">
+            <i class="bi bi-people"></i>
           </div>
-          
-          <div class="ofertas-list">
-            <div *ngIf="cargandoOfertas" class="text-center py-4">
-              <div class="spinner-border spinner-border-sm text-azul" role="status">
-                <span class="visually-hidden">Cargando...</span>
-              </div>
-            </div>
+          <div>
+            <span class="de-stat-label">TOTAL POSTULANTES</span>
+            <p class="de-stat-num">{{ statTotalPostulantes }}</p>
+          </div>
+        </div>
 
-            <div *ngIf="!cargandoOfertas && ofertas.length === 0" class="text-center py-4">
-              <p class="parrafos">No hay ofertas publicadas</p>
-            </div>
+        <div class="de-stat-card">
+          <div class="de-stat-icon">
+            <i class="bi bi-bell"></i>
+          </div>
+          <div>
+            <span class="de-stat-label">ENTREVISTAS</span>
+            <p class="de-stat-num">{{ statEntrevistas }}</p>
+          </div>
+        </div>
 
-            <div *ngFor="let oferta of ofertas; let last = last" class="oferta-item" [class.border-bottom]="!last">
-              <div class="d-flex justify-content-between align-items-start">
-                <div class="flex-grow-1">
-                  <h3 class="titulo-card mb-2">{{ oferta.title || oferta.titulo }}</h3>
-                  <div class="oferta-meta">
-                    <span class="meta-item">
-                      <i class="bi bi-calendar"></i>
-                      {{ formatDate(oferta.published_date || oferta.fecha) }}
-                    </span>
-                    <span class="meta-item">
-                      <i class="bi bi-person-check"></i>
-                      {{ oferta.applications_count || oferta.postulantes || 0 }} postulantes
-                    </span>
-                  </div>
+        <div class="de-stat-card">
+          <div class="de-stat-icon">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div>
+            <span class="de-stat-label">VACANTES CERRADAS</span>
+            <p class="de-stat-num">{{ statVacantesCerradas }}</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Grid principal ──────────────────────────────────────── -->
+  <section class="de-main-section">
+    <div class="container">
+      <div class="de-main-grid">
+
+        <!-- ── COL IZQUIERDA: Perfil de empresa ────────────── -->
+        <aside class="de-col-left">
+          <div class="de-profile-card">
+
+            <!-- Cabecera de la card -->
+            <div class="de-profile-header">
+              <div class="de-avatar-wrap">
+
+                <!-- Avatar con imagen o iniciales -->
+                <div class="de-avatar" *ngIf="!empresa?.logo_url">
+                  {{ empresaIniciales }}
                 </div>
-                <button class="btn-accion" title="Ver ofertas">
-                  <i class="bi bi-eye"></i>
+                <img
+                  *ngIf="empresa?.logo_url"
+                  [src]="empresa!.logo_url"
+                  [alt]="empresaNombre"
+                  class="de-avatar de-avatar-img"
+                />
+
+                <!-- Botón cámara -->
+                <button class="de-cam-btn" type="button" title="Cambiar logo">
+                  <i class="bi bi-camera"></i>
+                </button>
+              </div>
+
+              <h3 class="de-profile-name">{{ empresaNombre }}</h3>
+              <p class="de-profile-industry">{{ empresaIndustria }}</p>
+            </div>
+
+            <!-- Cuerpo de la card -->
+            <div class="de-profile-body">
+              <div class="de-info-pill">
+                <i class="bi bi-geo-alt de-accent"></i>
+                <span>{{ empresaUbicacion }}</span>
+              </div>
+              <div class="de-info-pill">
+                <i class="bi bi-envelope de-accent"></i>
+                <span>{{ empresaEmail }}</span>
+              </div>
+
+              <hr class="de-divider" />
+
+              <div class="text-center">
+                <button class="btn de-btn-secondary-lg w-100" (click)="irAEditarPerfil()">
+                  <i class="bi bi-gear me-1"></i> Editar perfil
                 </button>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Foro EmpleaLink -->
-        <div class="cards-container bg-white">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              <h2 class="titulo-seccion">Foro EmpleaLink</h2>
-              <p class="texto-mini">Novedades para empresas</p>
-            </div>
-            <span class="badge-admin">ADMIN</span>
           </div>
+        </aside>
 
-          <div class="forum-list">
-            <div *ngIf="cargandoForum" class="text-center py-4">
-              <div class="spinner-border spinner-border-sm text-azul" role="status">
-                <span class="visually-hidden">Cargando...</span>
+        <!-- ── COL CENTRO: Foro ─────────────────────────────── -->
+        <div class="de-col-center">
+          <div class="de-forum-card">
+
+            <!-- Header -->
+            <div class="de-forum-header">
+              <div>
+                <h4 class="fw-bold mb-1">Foro EmpleaLink</h4>
+                <p class="text-secondary mb-0">Novedades para empresas</p>
               </div>
+              <span class="de-badge-admin">ADMIN</span>
             </div>
 
-            <div *ngIf="!cargandoForum && forumPosts.length === 0" class="text-center py-4">
-              <p class="parrafos">No hay posts en el foro</p>
+            <!-- Sin posts -->
+            <div class="de-forum-body" *ngIf="postsForoRecientes.length === 0">
+              <p class="text-secondary mb-0">No hay publicaciones disponibles.</p>
             </div>
 
-            <div *ngFor="let post of forumPosts; let last = last" class="forum-post" [class.border-bottom]="!last">
-              <div class="post-date">{{ formatDate(post.created_at) }}</div>
-              <h3 class="post-title">{{ post.title }}</h3>
-              <button class="enlace-primario">Ver discusión</button>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-center mt-3">
-            <a href="#" class="enlace-primario">Explorar más discusiones</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Columna derecha - Perfil de empresa -->
-      <div class="col-lg-4">
-        <div class="cards-container bg-white sticky-profile">
-          <div class="text-center mb-4">
-            <img 
-              *ngIf="empresa?.logo" 
-              [src]="empresa.logo" 
-              alt="Logo de empresa"
-              class="empresa-logo mb-3"
+            <!-- Posts dinámicos -->
+            <div
+              *ngFor="let post of postsForoRecientes; let last = last; trackBy: trackById"
+              class="de-forum-post"
+              [class.de-forum-post--last]="last"
             >
-            <div *ngIf="!empresa?.logo" class="empresa-logo-placeholder mb-3">
-              <i class="bi bi-building"></i>
-            </div>
-            <h2 class="titulo-card">{{ empresa?.name || 'TechFlow Solutions' }}</h2>
-          </div>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="de-forum-tag">OFICIAL</span>
+                <span class="de-forum-date">{{ post.fechaFormateada }}</span>
+              </div>
 
-          <div class="profile-info">
-            <div class="info-item mb-3">
-              <i class="bi bi-geo-alt"></i>
-              <span class="parrafos">{{ empresa?.city || 'Buenos Aires, Argentina' }}</span>
-            </div>
-            <div class="info-item mb-3">
-              <i class="bi bi-globe"></i>
-              <span class="parrafos">{{ empresa?.website || 'techflowsolutions.com' }}</span>
-            </div>
-            <div class="info-item mb-3">
-              <i class="bi bi-telephone"></i>
-              <span class="parrafos">{{ empresa?.phone || 'info@techflow.com' }}</span>
-            </div>
-          </div>
+              <h4 class="de-forum-post-title">{{ post.title || 'Sin título' }}</h4>
+              <p class="de-forum-post-content">{{ post.contenidoCorto }}</p>
 
-          <div class="d-flex gap-2 mt-4">
-            <button class="boton-primario flex-grow-1">Editar Perfil</button>
-            <button class="btn-secondary">
-              <i class="bi bi-share"></i>
-            </button>
-          </div>
+              <div class="de-forum-author">
+                <img
+                  src="https://ui-avatars.com/api/?name=Admin+EmpleaLink&background=554DEF&color=fff&size=32"
+                  alt="Admin"
+                  class="de-forum-avatar"
+                />
+                <span class="de-forum-author-name">Admin EmpleaLink</span>
+              </div>
 
-          <hr class="my-4">
+              <div class="de-forum-comments">
+                💬 {{ post.cantidadComentarios }}
+                comentario{{ post.cantidadComentarios === 1 ? '' : 's' }}
+              </div>
 
-          <div class="profile-section">
-            <h3 class="titulo-card mb-3">Descripción</h3>
-            <p class="parrafos mb-0">
-              {{ empresa?.description || 'Transformamos el futuro laboral conectando talento con empresas líderes en el sector tecnológico.' }}
-            </p>
-          </div>
-
-          <hr class="my-4">
-
-          <div class="profile-section">
-            <h3 class="titulo-card mb-3">Redes Sociales</h3>
-            <div class="social-links d-flex gap-2">
-              <a href="#" class="social-btn" title="Facebook">
-                <i class="bi bi-facebook"></i>
-              </a>
-              <a href="#" class="social-btn" title="Twitter">
-                <i class="bi bi-twitter-x"></i>
-              </a>
-              <a href="#" class="social-btn" title="LinkedIn">
-                <i class="bi bi-linkedin"></i>
-              </a>
-              <a href="#" class="social-btn" title="Instagram">
-                <i class="bi bi-instagram"></i>
+              <a routerLink="/foro" class="de-link-primary d-flex align-items-center gap-1 mt-2" style="font-size:0.85rem;">
+                Ver discusión <i class="bi bi-chevron-right"></i>
               </a>
             </div>
+
+            <!-- Footer -->
+            <div class="de-forum-footer">
+              <a routerLink="/foro" class="de-link-subtle">Explorar más discusiones</a>
+            </div>
+
           </div>
         </div>
+
+        <!-- ── COL DERECHA: Mis Ofertas ─────────────────────── -->
+        <div class="de-col-right">
+          <div class="de-ofertas-card">
+
+            <!-- Header -->
+            <div class="de-ofertas-header">
+              <h4 class="fw-bold mb-0">Mis Ofertas</h4>
+              <a class="de-link-primary" (click)="irAGestion()" style="cursor:pointer;">
+                Ver todas
+              </a>
+            </div>
+
+            <!-- Sin ofertas -->
+            <p *ngIf="misOfertas.length === 0" class="text-secondary px-2">
+              Aún no has publicado ofertas.
+            </p>
+
+            <!-- Lista de ofertas -->
+            <div
+              *ngFor="let oferta of misOfertas; trackBy: trackById"
+              class="de-oferta-item"
+            >
+              <div class="de-oferta-top">
+                <h6 class="fw-bold mb-0 de-oferta-title">{{ oferta.title || 'Oferta' }}</h6>
+                <span
+                  class="badge rounded-pill de-status-badge"
+                  [style.background-color]="oferta.estadoColor"
+                >
+                  {{ oferta.estadoTexto }}
+                </span>
+              </div>
+
+              <div class="de-oferta-meta">
+                <small class="text-secondary">
+                  <i class="bi bi-clock"></i> {{ oferta.fechaFormateada }}
+                </small>
+                <small class="fw-bold">
+                  <i class="bi bi-people de-accent"></i>
+                  {{ oferta.cantidadPostulantes }} postulados
+                </small>
+              </div>
+
+              <button
+                class="btn w-100 de-btn-gestionar"
+                (click)="irADetalle(oferta.id)"
+              >
+                Gestionar Candidatos
+              </button>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
+  </section>
+
+</ng-container>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL CREAR OFERTA
+     ══════════════════════════════════════════════════════════════ -->
+<div class="de-modal-backdrop" *ngIf="mostrarModal" (click)="cerrarModal()"></div>
+
+<div class="de-modal-wrap" *ngIf="mostrarModal" role="dialog" aria-modal="true" aria-labelledby="modalOfertaLabel">
+  <div class="de-modal" (click)="$event.stopPropagation()">
+    <div class="de-modal-body">
+
+      <!-- Header -->
+      <div class="de-modal-header-row">
+        <div class="de-modal-icon-wrap">
+          <i class="bi bi-suitcase-lg de-accent"></i>
+        </div>
+        <div>
+          <h2 class="de-modal-title" id="modalOfertaLabel">Crear una nueva oferta</h2>
+          <p class="de-modal-subtitle">Completa los detalles. Todos los campos son obligatorios.</p>
+        </div>
+        <button class="de-modal-close" (click)="cerrarModal()" type="button" aria-label="Cerrar">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <!-- ── Formulario ────────────────────────────────────── -->
+      <div class="de-modal-scroll">
+
+        <!-- Título -->
+        <div class="mb-4">
+          <label class="de-label">Título del Puesto</label>
+          <input
+            type="text"
+            class="form-control de-input"
+            [(ngModel)]="nuevaOferta.titulo"
+            placeholder="Ej. Programador Senior"
+          />
+        </div>
+
+        <!-- Experiencia -->
+        <div class="mb-4">
+          <label class="de-label">Experiencia requerida</label>
+          <input
+            type="text"
+            class="form-control de-input"
+            [(ngModel)]="nuevaOferta.experiencia"
+            placeholder="Ej. 2 a 3 años"
+          />
+        </div>
+
+        <!-- Ubicación (radio) -->
+        <div class="mb-4">
+          <label class="de-label mb-3">Ubicación</label>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="de-radio-opt">
+                <input
+                  class="form-check-input de-radio"
+                  type="radio"
+                  name="ubicacion"
+                  id="rem"
+                  value="remote"
+                  [(ngModel)]="nuevaOferta.modalidad"
+                />
+                <label class="form-check-label" for="rem">Remoto</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="de-radio-opt">
+                <input
+                  class="form-check-input de-radio"
+                  type="radio"
+                  name="ubicacion"
+                  id="pres"
+                  value="onsite"
+                  [(ngModel)]="nuevaOferta.modalidad"
+                />
+                <label class="form-check-label" for="pres">Presencial</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="de-radio-opt">
+                <input
+                  class="form-check-input de-radio"
+                  type="radio"
+                  name="ubicacion"
+                  id="hibrido"
+                  value="hybrid"
+                  [(ngModel)]="nuevaOferta.modalidad"
+                />
+                <label class="form-check-label" for="hibrido">Híbrido</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tipo de trabajo (radio) -->
+        <div class="mb-4">
+          <label class="de-label mb-3">Tipo</label>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="de-radio-opt">
+                <input
+                  class="form-check-input de-radio"
+                  type="radio"
+                  name="tipo"
+                  id="ft"
+                  value="full_time"
+                  [(ngModel)]="nuevaOferta.tipo"
+                />
+                <label class="form-check-label" for="ft">Full time</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="de-radio-opt">
+                <input
+                  class="form-check-input de-radio"
+                  type="radio"
+                  name="tipo"
+                  id="pt"
+                  value="part_time"
+                  [(ngModel)]="nuevaOferta.tipo"
+                />
+                <label class="form-check-label" for="pt">Mid time</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="de-radio-opt">
+                <input
+                  class="form-check-input de-radio"
+                  type="radio"
+                  name="tipo"
+                  id="prac"
+                  value="internship"
+                  [(ngModel)]="nuevaOferta.tipo"
+                />
+                <label class="form-check-label" for="prac">Prácticas</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Salarios -->
+        <div class="row mb-4">
+          <div class="col-md-6 mb-3 mb-md-0">
+            <label class="de-label">Salario Mínimo</label>
+            <input
+              type="text"
+              class="form-control de-input"
+              [(ngModel)]="nuevaOferta.salarioMin"
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="de-label">Salario Máximo</label>
+            <input
+              type="text"
+              class="form-control de-input"
+              [(ngModel)]="nuevaOferta.salarioMax"
+            />
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-4">
+          <label class="de-label">Descripción</label>
+          <textarea
+            class="form-control de-input de-textarea"
+            [(ngModel)]="nuevaOferta.descripcion"
+            rows="4"
+          ></textarea>
+        </div>
+
+        <!-- Responsabilidades -->
+        <div class="mb-4">
+          <label class="de-label">Responsabilidades</label>
+          <textarea
+            class="form-control de-input de-textarea"
+            [(ngModel)]="nuevaOferta.responsabilidades"
+            rows="4"
+          ></textarea>
+        </div>
+
+        <!-- Requisitos -->
+        <div class="mb-4">
+          <label class="de-label">Requisitos</label>
+          <textarea
+            class="form-control de-input de-textarea"
+            [(ngModel)]="nuevaOferta.requisitos"
+            rows="4"
+          ></textarea>
+        </div>
+
+        <!-- Estado de publicación -->
+        <div class="mb-5">
+          <label class="de-label">Estado de Publicación</label>
+          <select class="form-select de-input" [(ngModel)]="nuevaOferta.estado">
+            <option value="2">Activa</option>
+            <option value="1">Pausada</option>
+            <option value="3">Cerrada</option>
+          </select>
+        </div>
+
+        <!-- Mensaje feedback -->
+        <p
+          *ngIf="mensajeOferta"
+          class="de-feedback-msg"
+          [class.text-success]="!mensajeOfertaError"
+          [class.text-danger]="mensajeOfertaError"
+        >
+          {{ mensajeOferta }}
+        </p>
+
+        <!-- Botones footer -->
+        <div class="d-flex justify-content-end gap-3">
+          <button
+            type="button"
+            class="btn de-btn-secondary"
+            (click)="cerrarModal()"
+            [disabled]="enviandoOferta"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn de-btn-primary"
+            (click)="crearOferta()"
+            [disabled]="enviandoOferta"
+          >
+            <span
+              *ngIf="enviandoOferta"
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+            ></span>
+            {{ enviandoOferta ? 'Guardando…' : 'Guardar Cambios' }}
+          </button>
+        </div>
+
+      </div>
+      <!-- /de-modal-scroll -->
+
+    </div>
   </div>
-</section>
+</div>
