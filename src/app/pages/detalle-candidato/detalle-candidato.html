@@ -1,0 +1,177 @@
+<section class="py-5 detalle-candidato-container">
+  <div class="container">
+    <!-- Encabezado -->
+    <div class="mb-5">
+      <button class="btn-link mb-3" (click)="volverAtras()">
+        <i class="bi bi-arrow-left"></i> Volver a Gestión de Ofertas
+      </button>
+      <h1 class="titulos text-azul">Perfil del <span class="highlight">Candidato</span></h1>
+      <p class="parrafos">Analiza detalladamente la información profesional del postulante para la vacante.</p>
+    </div>
+
+    <!-- Cargando -->
+    <div *ngIf="cargando" class="text-center py-5">
+      <div class="spinner-border text-azul" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-3">Cargando perfil del candidato...</p>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div *ngIf="!cargando && candidato" class="row g-4">
+      <!-- Sidebar Izquierda -->
+      <div class="col-lg-3">
+        <div class="candidato-card cards-container bg-white">
+          <!-- Avatar -->
+          <div class="text-center mb-4">
+            <img
+              [src]="candidato.avatar"
+              alt="Avatar de candidato"
+              class="candidato-avatar mb-3"
+            />
+            <h2 class="titulo-candidato">{{ candidato.name }}</h2>
+            <p class="titulo-profesional">{{ candidato.title }}</p>
+            <p class="localizacion">
+              <i class="bi bi-geo-alt-fill"></i> {{ candidato.location }}
+            </p>
+          </div>
+
+          <!-- Modalidad -->
+          <div class="badge-modalidad mb-4">
+            <i class="bi bi-briefcase"></i> {{ candidato.workMode }}
+          </div>
+
+          <!-- Contacto -->
+          <div class="contacto-section mb-4">
+            <div class="contacto-item mb-3">
+              <i class="bi bi-envelope-fill"></i>
+              <span>{{ candidato.email }}</span>
+            </div>
+            <div class="contacto-item">
+              <i class="bi bi-telephone-fill"></i>
+              <span>{{ candidato.phone }}</span>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="acciones-section">
+            <button class="btn-aceptar w-100 mb-2" (click)="aceptarCandidato()">
+              <i class="bi bi-check-circle"></i> Aceptar Candidato
+            </button>
+            <button class="btn-rechazar w-100 mb-2" (click)="rechazarCandidato()">
+              <i class="bi bi-x-circle"></i> Rechazar Candidato
+            </button>
+            <button class="btn-descargar w-100" (click)="descargarCV()">
+              <i class="bi bi-download"></i> Descargar CV (PDF)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido Principal -->
+      <div class="col-lg-9">
+        <!-- Perfil Profesional -->
+        <div class="cards-container bg-white mb-4">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-person-badge" style="font-size: 24px; color: #5b6df6"></i>
+            <h3 class="titulo-seccion mb-0">Perfil Profesional</h3>
+          </div>
+          <p class="parrafos">{{ candidato.profesionalProfile }}</p>
+          <div class="especializacion-row">
+            <div>
+              <p class="label-especializacion">ESPECIALIZACIÓN</p>
+              <p class="valor-especializacion">Product Design & Design Systems</p>
+            </div>
+            <div>
+              <p class="label-especializacion">EXPERIENCIA TOTAL</p>
+              <p class="valor-especializacion">8+ años</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Experiencia Laboral -->
+        <div class="cards-container bg-white mb-4">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-briefcase-fill" style="font-size: 24px; color: #5b6df6"></i>
+            <h3 class="titulo-seccion mb-0">Experiencia Laboral</h3>
+          </div>
+
+          <div *ngFor="let exp of candidato.experiencia; let last = last" class="experiencia-item" [class.last]="last">
+            <div class="experiencia-punto"></div>
+            <div class="experiencia-contenido">
+              <div class="d-flex justify-content-between align-items-start mb-1">
+                <h4 class="experiencia-titulo">{{ exp.title }}</h4>
+                <span class="badge-periodo">{{ formatearFecha(exp.startDate) }} - {{ exp.isCurrent ? 'Presente' : formatearFecha(exp.endDate) }}</span>
+              </div>
+              <p class="experiencia-empresa">{{ exp.company }}</p>
+              <p class="experiencia-descripcion">{{ exp.description }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Educación y Habilidades -->
+        <div class="row g-4">
+          <!-- Educación -->
+          <div class="col-md-6">
+            <div class="cards-container bg-white">
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-book-fill" style="font-size: 24px; color: #5b6df6"></i>
+                <h3 class="titulo-seccion mb-0">Educación</h3>
+              </div>
+
+              <div *ngFor="let edu of candidato.educacion" class="educacion-item">
+                <p class="educacion-titulo">{{ edu.title }}</p>
+                <p class="educacion-institucion">{{ edu.institution }}</p>
+                <p class="educacion-periodo">{{ formatearFecha(edu.startDate) }} - {{ formatearFecha(edu.endDate) }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Habilidades -->
+          <div class="col-md-6">
+            <div class="cards-container bg-white">
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-star-fill" style="font-size: 24px; color: #5b6df6"></i>
+                <h3 class="titulo-seccion mb-0">Habilidades</h3>
+              </div>
+
+              <div class="habilidades-grid">
+                <span *ngFor="let habilidad of candidato.habilidades" class="badge-habilidad">
+                  {{ habilidad }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de Confirmación -->
+<div *ngIf="mostrarConfirmacion" class="modal-overlay" (click)="cancelarConfirmacion()">
+  <div class="modal-confirmacion" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="titulo-modal">
+        <i [class]="tipoAccion === 'aceptar' ? 'bi bi-check-circle-fill' : 'bi bi-x-circle-fill'"></i>
+        {{ tipoAccion === 'aceptar' ? 'Aceptar Candidato' : 'Rechazar Candidato' }}
+      </h3>
+    </div>
+    <div class="modal-body">
+      <p>{{ mensajeConfirmacion }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancelar" (click)="cancelarConfirmacion()" [disabled]="guardando">
+        Cancelar
+      </button>
+      <button
+        [class]="tipoAccion === 'aceptar' ? 'btn-aceptar' : 'btn-rechazar'"
+        (click)="confirmarAccion()"
+        [disabled]="guardando"
+      >
+        <span *ngIf="guardando" class="spinner-border spinner-border-sm me-2"></span>
+        {{ tipoAccion === 'aceptar' ? 'Aceptar' : 'Rechazar' }}
+      </button>
+    </div>
+  </div>
+</div>
