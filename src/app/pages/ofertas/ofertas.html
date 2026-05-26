@@ -1,12 +1,216 @@
-<div class="ofertas-container">
-  <h2>Ofertas de Empleo</h2>
+<div class="page-container">
+  <!-- Cabecera -->
+  <div class="header-section">
+    <h1 class="page-title">Encuentra tu próxima oportunidad</h1>
+    <p class="page-subtitle">Mostrando <span class="count-highlight">{{ filteredOfertas.length }} vacantes</span> activas para tu búsqueda.</p>
 
-  <div *ngIf="ofertas.length === 0">
-    <p>Cargando ofertas...</p>
+    <div class="search-bar-container">
+      <div class="search-left">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" class="search-text-input" placeholder="Puesto, empresa o palabra clave" [(ngModel)]="filtros.busqueda" (keyup.enter)="aplicarFiltros()">
+      </div>
+      <div class="search-divider"></div>
+      <div class="search-right">
+        <svg class="location-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        <select class="location-select" [(ngModel)]="filtros.ubicacion" (change)="aplicarFiltros()">
+          <option value="">Ubicación o Trabajo remoto</option>
+          <option value="remote">Remoto</option>
+          <option value="hybrid">Híbrido</option>
+          <option value="onsite">Presencial</option>
+        </select>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <button class="btn-search" (click)="aplicarFiltros()">Buscar</button>
+    </div>
   </div>
 
-  <div class="oferta-card" *ngFor="let oferta of ofertas">
-    <h3>{{ oferta.titulo }}</h3>
-    <p>{{ oferta.descripcion }}</p>
+  <div class="content-layout">
+    <!-- Sidebar de Filtros -->
+    <aside class="filters-sidebar">
+      <div class="filter-header">
+        <div class="filter-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+          Filtros
+        </div>
+        <button class="btn-clear" (click)="limpiarFiltros()">Limpiar</button>
+      </div>
+
+      <!-- Tipo de empleo -->
+      <div class="filter-group">
+        <h4>TIPO DE EMPLEO</h4>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.tipoEmpleo === 'full_time'" (change)="setTipoEmpleo('full_time')"> Tiempo completo
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.tipoEmpleo === 'part_time'" (change)="setTipoEmpleo('part_time')"> Medio tiempo
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.tipoEmpleo === 'freelance'" (change)="setTipoEmpleo('freelance')"> Freelance
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.tipoEmpleo === 'internship'" (change)="setTipoEmpleo('internship')"> Prácticas
+        </label>
+      </div>
+
+      <hr class="filter-divider">
+
+      <!-- Modalidad -->
+      <div class="filter-group">
+        <h4>MODALIDAD</h4>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.modalidad === 'onsite'" (change)="setModalidad('onsite')"> Presencial
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.modalidad === 'remote'" (change)="setModalidad('remote')"> Remoto
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.modalidad === 'hybrid'" (change)="setModalidad('hybrid')"> Híbrido
+        </label>
+      </div>
+
+      <hr class="filter-divider">
+
+      <!-- Nivel de experiencia -->
+      <div class="filter-group">
+        <h4>NIVEL DE EXPERIENCIA</h4>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.experiencia === 'junior'" (change)="setExperiencia('junior')"> Junior
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.experiencia === 'mid-level'" (change)="setExperiencia('mid-level')"> Mid-level
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.experiencia === 'senior'" (change)="setExperiencia('senior')"> Senior
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" [checked]="filtros.experiencia === 'manager'" (change)="setExperiencia('manager')"> Manager
+        </label>
+      </div>
+
+      <hr class="filter-divider">
+
+      <!-- Rango Salarial -->
+      <div class="filter-group">
+        <h4>RANGO SALARIAL (USD)</h4>
+        <select class="custom-select">
+          <option value="">Cualquier rango</option>
+          <option value="0-2000">$0 - $2,000</option>
+          <option value="2000-4000">$2,000 - $4,000</option>
+          <option value="4000+">+$4,000</option>
+        </select>
+      </div>
+
+      <button class="btn-apply-filters" (click)="aplicarFiltros()">Aplicar Filtros</button>
+    </aside>
+
+    <!-- Lista de Ofertas -->
+    <main class="jobs-main">
+      <!-- Toolbar -->
+      <div class="jobs-toolbar">
+        <span class="sort-label">Ordenar por:</span>
+        <div class="sort-select-wrapper">
+          <select class="sort-select" [(ngModel)]="filtros.ordenarPor" (change)="aplicarFiltros()">
+            <option value="desc">Más recientes</option>
+            <option value="asc">Más antiguos</option>
+          </select>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+
+      <!-- Estado de carga -->
+      <div *ngIf="loading" class="loading-state">
+        <p>Cargando ofertas de empleo...</p>
+      </div>
+
+      <!-- Estado vacío -->
+      <div *ngIf="!loading && filteredOfertas.length === 0" class="empty-state">
+        <p>No se encontraron ofertas que coincidan con tu búsqueda.</p>
+      </div>
+
+      <!-- Tarjetas -->
+      <div class="jobs-list">
+        <div class="job-card" *ngFor="let job of paginatedOfertas">
+          <!-- Logo / Iniciales -->
+          <div class="job-logo" [style.background]="job.logoBg">
+            <img *ngIf="job.companyLogo" [src]="job.companyLogo" [alt]="job.companyName">
+            <span *ngIf="!job.companyLogo">{{ job.initials }}</span>
+          </div>
+
+          <!-- Contenido principal -->
+          <div class="job-body">
+            <div class="job-top-row">
+              <h3 class="job-title">{{ job.title }}</h3>
+              <span class="job-salary" [ngClass]="{'salary-convenir': !job.salaryMin && !job.salaryMax}">
+                {{ formatSalary(job.salaryMin, job.salaryMax) }}
+              </span>
+            </div>
+
+            <div class="job-meta">
+              <span class="meta-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                {{ job.companyName }}
+              </span>
+              <span class="meta-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                {{ job.location }}
+              </span>
+              <span class="meta-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                {{ getDaysAgo(job.date) }}
+              </span>
+            </div>
+
+            <p class="job-description">{{ job.description | slice:0:130 }}...</p>
+
+            <div class="job-tags">
+              <span class="tag" *ngFor="let tag of job.tags">{{ tag }}</span>
+            </div>
+          </div>
+
+          <!-- Botón ver oferta -->
+          <div class="job-action">
+            <button class="btn-ver-oferta" [routerLink]="['/ofertas', job.id]">
+              Ver oferta
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paginación -->
+      <div class="pagination" *ngIf="!loading && filteredOfertas.length > 0">
+        <!-- Anterior -->
+        <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+
+        <!-- Primera página si no está en el rango -->
+        <ng-container *ngIf="getPageNumbers()[0] > 1">
+          <button class="page-btn" (click)="goToPage(1)">1</button>
+          <span class="page-dots" *ngIf="getPageNumbers()[0] > 2">...</span>
+        </ng-container>
+
+        <!-- Páginas visibles -->
+        <button
+          class="page-btn"
+          *ngFor="let page of getPageNumbers()"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+
+        <!-- Última página si no está en el rango -->
+        <ng-container *ngIf="getPageNumbers()[getPageNumbers().length - 1] < totalPages">
+          <span class="page-dots" *ngIf="getPageNumbers()[getPageNumbers().length - 1] < totalPages - 1">...</span>
+          <button class="page-btn" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+        </ng-container>
+
+        <!-- Siguiente -->
+        <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+    </main>
   </div>
 </div>

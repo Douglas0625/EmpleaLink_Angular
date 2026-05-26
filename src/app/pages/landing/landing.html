@@ -1,0 +1,176 @@
+<!-- ─── HERO ──────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <p class="hero-eyebrow">¡Bienvenido a EmpleaLink!</p>
+  <h1 class="hero-title">
+    Tu próximo <span class="hero-accent">desafío<br>profesional</span> comienza aquí
+  </h1>
+  <p class="hero-subtitle">
+    Encuentra empleos, compara salarios, aprende de la comunidad y conecta<br>
+    tu talento con las mejores empresas de la región.
+  </p>
+
+  <!-- Barra de búsqueda -->
+  <div class="hero-search">
+    <div class="hs-left">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Puesto, empresa o habilidad" [(ngModel)]="busqueda" (keyup.enter)="buscar()">
+    </div>
+    <div class="hs-divider"></div>
+    <div class="hs-right">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      <input type="text" placeholder="Ciudad o trabajo remoto" [(ngModel)]="ubicacion" (keyup.enter)="buscar()">
+    </div>
+    <button class="hs-btn" (click)="buscar()">Buscar Empleo</button>
+  </div>
+
+  <!-- Tags populares -->
+  <div class="hero-tags">
+    <span class="tags-label">Populares:</span>
+    <button *ngFor="let tag of popularTags" class="hero-tag" (click)="buscarTag(tag)">{{ tag }}</button>
+  </div>
+</section>
+
+<!-- ─── ESTADÍSTICAS ─────────────────────────────────────────────────── -->
+<section class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5b6df6" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <div>
+        <p class="stat-num">1.2M+</p>
+        <p class="stat-lbl">Vacantes</p>
+      </div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5b6df6" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      <div>
+        <p class="stat-num">45,000+</p>
+        <p class="stat-lbl">Empresas</p>
+      </div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5b6df6" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <div>
+        <p class="stat-num">120+</p>
+        <p class="stat-lbl">Categorías</p>
+      </div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5b6df6" stroke-width="1.5"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      <div>
+        <p class="stat-num">3.5M+</p>
+        <p class="stat-lbl">Usuarios activos</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── OFERTAS DESTACADAS ────────────────────────────────────────────── -->
+<section class="section">
+  <div class="section-header">
+    <div>
+      <h2 class="section-title">Ofertas que te <span class="accent">interesan</span></h2>
+      <p class="section-subtitle">Las vacantes más recientes publicadas en nuestra plataforma.</p>
+    </div>
+    <a routerLink="/ofertas" class="see-all-link">Ver todas las ofertas →</a>
+  </div>
+
+  <div *ngIf="loadingJobs" class="loading-msg">Cargando ofertas...</div>
+
+  <div class="jobs-grid" *ngIf="!loadingJobs">
+    <div class="job-card" *ngFor="let job of featuredJobs">
+      <div class="jc-top">
+        <div class="jc-logo" [style.background]="job.logoBg">{{ job.initials }}</div>
+        <span class="jc-tag">{{ job.modality }}</span>
+      </div>
+      <h3 class="jc-title">{{ job.title }}</h3>
+      <p class="jc-company">{{ job.companyName }}</p>
+      <p class="jc-location">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ job.location }}
+      </p>
+      <p class="jc-salary">{{ formatSalary(job.salaryMin, job.salaryMax) }}</p>
+      <button class="jc-btn" [routerLink]="['/ofertas', job.id]">Ver puesto</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── RECURSOS ──────────────────────────────────────────────────────── -->
+<section class="section section-alt">
+  <div class="section-header centered">
+    <h2 class="section-title">Recursos para potenciar tu <span class="accent">carrera</span></h2>
+  </div>
+  <div class="recursos-grid">
+    <div class="recurso-card" *ngFor="let r of recursos">
+      <div class="rc-icon" [ngClass]="'icon-' + r.icon">
+        <!-- CV -->
+        <svg *ngIf="r.icon === 'cv'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <!-- Entrevista -->
+        <svg *ngIf="r.icon === 'interview'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <!-- Sectores -->
+        <svg *ngIf="r.icon === 'sectors'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      </div>
+      <h3 class="rc-title">{{ r.title }}</h3>
+      <p class="rc-desc">{{ r.desc }}</p>
+      <a [routerLink]="r.link" class="rc-link">Leer más →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FORO ──────────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="foro-layout">
+    <div class="foro-left">
+      <span class="section-tag">Comunidad</span>
+      <h2 class="section-title">El Foro de<br><span class="accent">EmpleaLink</span></h2>
+      <p class="foro-desc">
+        Miles de profesionales comparten experiencias, consejos y oportunidades en nuestra comunidad.
+        Únete y aprende de los mejores.
+      </p>
+      <a routerLink="/foro" class="btn-outline">Explorar el Foro →</a>
+    </div>
+    <div class="foro-right">
+      <div class="foro-post" *ngFor="let post of foroDestacados">
+        <span class="post-num">{{ post.num < 10 ? '0' + post.num : post.num }}</span>
+        <div class="post-body">
+          <p class="post-title">{{ post.titulo }}</p>
+          <span class="post-meta">{{ post.comentarios }} comentarios · {{ post.fecha }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── REVIEWS ───────────────────────────────────────────────────────── -->
+<section class="section section-alt" *ngIf="reviews.length > 0">
+  <div class="section-header centered">
+    <h2 class="section-title">¿Cómo es trabajar <span class="accent">allí?</span></h2>
+    <p class="section-subtitle">Opiniones reales de personas que trabajaron en estas empresas.</p>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card" *ngFor="let r of reviews">
+      <div class="rv-header">
+        <div class="rv-logo" [style.background]="r.logoBg">{{ r.initials }}</div>
+        <div>
+          <p class="rv-company">{{ r.companyName }}</p>
+          <div class="rv-stars">
+            <span *ngFor="let s of getStars(r.rating)" class="star" [ngClass]="s">★</span>
+          </div>
+        </div>
+      </div>
+      <p class="rv-comment">"{{ r.comment }}"</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ───────────────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <h2 class="cta-title">¿Listo para dar el siguiente paso?</h2>
+  <p class="cta-sub">Crea tu perfil gratis y accede a miles de oportunidades laborales.</p>
+  <div class="cta-btns">
+    <a routerLink="/registro" class="btn-cta-primary">Registrarse gratis</a>
+    <a routerLink="/ofertas" class="btn-cta-outline">Explorar empleos</a>
+  </div>
+</section>

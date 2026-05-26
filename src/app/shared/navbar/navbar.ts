@@ -14,7 +14,7 @@ interface Notificacion {
   created_at: string;
 }
 
-const API = 'https://portal-empleo-api-production.up.railway.app/api';
+const API = 'https://portal-empleo-api-production-481e.up.railway.app/api';
 
 @Component({
   selector: 'app-navbar',
