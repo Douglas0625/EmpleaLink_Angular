@@ -1,0 +1,352 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   DASHBOARD EMPRESA - ESTILOS
+══════════════════════════════════════════════════════════════════════════ */
+
+.dashboard-empresa-container {
+  background-color: #f8f9fc;
+  min-height: 100vh;
+}
+
+/* ─── TARJETAS DE ESTADÍSTICAS ────────────────────────────────────────────── */
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ebf5;
+  box-shadow: 0 2px 8px rgba(31, 35, 51, 0.04);
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(31, 35, 51, 0.08);
+    transform: translateY(-2px);
+  }
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #5b6df6 0%, #7b8df8 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.stat-label {
+  color: #6f7894;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: 'Jua', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1f2333;
+  margin: 0;
+}
+
+/* ─── SECCIÓN DE OFERTAS ──────────────────────────────────────────────────── */
+.ofertas-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.oferta-item {
+  padding: 16px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+
+  &.border-bottom {
+    border-bottom: 1px solid #e9ebf5;
+  }
+
+  &:hover {
+    background-color: #f8f9fc;
+    padding: 16px;
+    margin: 0 -28px;
+    padding-left: 28px;
+    padding-right: 28px;
+    border-radius: 8px;
+  }
+}
+
+.oferta-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #6f7894;
+
+  i {
+    color: #5b6df6;
+    font-size: 14px;
+  }
+}
+
+/* ─── SECCIÓN FORO ────────────────────────────────────────────────────────── */
+.badge-admin {
+  display: inline-block;
+  background-color: #fff4e6;
+  color: #f59e0b;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.forum-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.forum-post {
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &.border-bottom {
+    border-bottom: 1px solid #e9ebf5;
+  }
+
+  &:hover {
+    background-color: #f8f9fc;
+    padding: 16px;
+    margin: 0 -28px;
+    padding-left: 28px;
+    padding-right: 28px;
+    border-radius: 8px;
+  }
+}
+
+.post-date {
+  font-size: 12px;
+  color: #a0a7b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.post-title {
+  font-family: 'Jua', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2333;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ─── PERFIL DE EMPRESA (SIDEBAR) ────────────────────────────────────────── */
+.sticky-profile {
+  position: sticky;
+  top: 20px;
+  border: 1px solid #e9ebf5;
+  box-shadow: 0 2px 8px rgba(31, 35, 51, 0.04);
+}
+
+.empresa-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(91, 109, 246, 0.15);
+}
+
+.empresa-logo-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #5b6df6 0%, #7b8df8 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.profile-info {
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    i {
+      color: #5b6df6;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+.profile-section {
+  h3 {
+    color: #1f2333;
+  }
+}
+
+.social-links {
+  .social-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: #f0f2fa;
+    color: #5b6df6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 18px;
+    transition: all 0.2s;
+    border: 1px solid #e9ebf5;
+
+    &:hover {
+      background-color: #5b6df6;
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+/* ─── BOTONES ────────────────────────────────────────────────────────────── */
+.btn-accion {
+  background-color: #f0f2fa;
+  border: none;
+  color: #5b6df6;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+
+  &:hover {
+    background-color: #5b6df6;
+    color: #ffffff;
+    transform: scale(1.1);
+  }
+}
+
+.btn-secondary {
+  background-color: #f0f2fa;
+  border: 1px solid #e9ebf5;
+  color: #5b6df6;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #e8ebff;
+    border-color: #5b6df6;
+  }
+}
+
+/* ─── ENLACES ────────────────────────────────────────────────────────────── */
+.enlace-primario {
+  color: #5b6df6;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    color: #4a5ae0;
+    text-decoration: underline;
+  }
+
+  i {
+    font-size: 14px;
+  }
+}
+
+/* ─── SCROLLBAR PERSONALIZADO ────────────────────────────────────────────── */
+.ofertas-list,
+.forum-list {
+  scrollbar-width: thin;
+  scrollbar-color: #d0d6e8 #f8f9fc;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f8f9fc;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d0d6e8;
+    border-radius: 10px;
+
+    &:hover {
+      background: #b0b8d8;
+    }
+  }
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media (max-width: 992px) {
+  .sticky-profile {
+    position: static;
+    top: auto;
+  }
+
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+
+    .stat-icon {
+      margin: 0 auto;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard-empresa-container {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+
+  .cards-container {
+    padding: 16px !important;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .titulo-seccion {
+    font-size: 16px;
+  }
+
+  .oferta-item:hover,
+  .forum-post:hover {
+    padding: 16px;
+  }
+}

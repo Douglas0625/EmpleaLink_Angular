@@ -1,1 +1,240 @@
-<p>perfil-empresa works!</p>
+<!-- Sección Principal -->
+<section class="py-5 perfil-empresa-container">
+  <div class="container">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-start mb-5">
+      <div>
+        <a routerLink="/dashboard-empresa" class="enlace-primario mb-3 d-inline-block">
+          <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+        <h1 class="titulos text-azul mb-2">Mi Empresa</h1>
+        <p class="parrafos">Gestiona tu identidad institucional y destaca tu cultura para atraer el mejor talento.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <button class="btn-cancel" (click)="cancelar()" *ngIf="modoEdicion">Cancelar</button>
+        <button class="boton-primario" (click)="guardarCambios()" *ngIf="modoEdicion" [disabled]="guardando">
+          <span *ngIf="guardando" class="spinner-border spinner-border-sm me-2"></span>
+          Guardar cambios
+        </button>
+      </div>
+    </div>
+
+    <!-- Grid Principal -->
+    <div class="row g-4">
+      <!-- Columna Izquierda -->
+      <div class="col-lg-4">
+        <!-- Card Perfil -->
+        <div class="perfil-card cards-container bg-white">
+          <div class="position-relative mb-4">
+            <span class="badge-verificado">
+              <i class="bi bi-check-circle-fill"></i> Verificado
+            </span>
+          </div>
+
+          <div class="text-center mb-4">
+            <div class="empresa-logo-grande mb-3">
+              <img src="https://ui-avatars.com/api/?name=TechFlow&background=5b6df6&color=fff&size=120" 
+                   alt="Logo empresa" class="img-fluid">
+            </div>
+            <h2 class="titulo-card">{{ nombreEmpresaDisplay }}</h2>
+            <p class="parrafos mb-3">{{ formulario.get('ubicacion')?.value }}</p>
+          </div>
+
+          <!-- Contacto -->
+          <div class="contacto-info mb-4">
+            <div class="info-row mb-3">
+              <i class="bi bi-envelope"></i>
+              <span>{{ formulario.get('emailCorporativo')?.value }}</span>
+            </div>
+            <div class="info-row mb-3">
+              <i class="bi bi-telephone"></i>
+              <span>{{ formulario.get('telefono')?.value }}</span>
+            </div>
+          </div>
+
+          <button class="boton-secundario w-100 mb-3" (click)="verPerfilPublico()">
+            <i class="bi bi-eye"></i> Ver perfil público
+          </button>
+
+          <!-- Estadísticas -->
+          <div class="estadisticas-compactas">
+            <div class="stat-row">
+              <div class="stat-item">
+                <p class="stat-numero">{{ stats.vacantesTotales }}</p>
+                <p class="stat-label">Vacantes Totales</p>
+              </div>
+              <div class="stat-item">
+                <p class="stat-numero">{{ stats.vacantesActivas }}</p>
+                <p class="stat-label">Vacantes Activas</p>
+              </div>
+            </div>
+            <div class="stat-row mt-3">
+              <div class="stat-item">
+                <p class="stat-numero">1.4k</p>
+                <p class="stat-label">Postulantes</p>
+              </div>
+              <div class="stat-item">
+                <p class="stat-numero">{{ stats.crecimiento }}</p>
+                <p class="stat-label">Crecimiento</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha -->
+      <div class="col-lg-8">
+        <form [formGroup]="formulario" (ngValueChange)="onFormChange()">
+          <!-- Información General -->
+          <div class="cards-container bg-white mb-4">
+            <div class="d-flex align-items-center gap-2 mb-4">
+              <i class="bi bi-shield-lock" style="font-size: 24px; color: #5b6df6;"></i>
+              <div>
+                <h2 class="titulo-seccion mb-0">Información General</h2>
+                <p class="texto-mini mb-0">Datos básicos de identificación institucionale</p>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Nombre de la Empresa</label>
+                <input 
+                  type="text" 
+                  class="form-control form-control-lg"
+                  formControlName="nombreEmpresa"
+                  [readonly]="!modoEdicion">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Correo Corporativo</label>
+                <input 
+                  type="email" 
+                  class="form-control form-control-lg"
+                  formControlName="emailCorporativo"
+                  [readonly]="!modoEdicion">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Teléfono</label>
+                <input 
+                  type="tel" 
+                  class="form-control form-control-lg"
+                  formControlName="telefono"
+                  [readonly]="!modoEdicion">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Ubicación</label>
+                <input 
+                  type="text" 
+                  class="form-control form-control-lg"
+                  placeholder="Ciudad, País"
+                  formControlName="ubicacion"
+                  [readonly]="!modoEdicion">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Rubro o Sector</label>
+                <select 
+                  class="form-select form-select-lg"
+                  formControlName="rubroSector"
+                  [disabled]="!modoEdicion">
+                  <option value="Tecnología e IA">Tecnología e IA</option>
+                  <option value="Finanzas">Finanzas</option>
+                  <option value="E-commerce">E-commerce</option>
+                  <option value="Salud">Salud</option>
+                  <option value="Educación">Educación</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tamaño de la Empresa</label>
+                <select 
+                  class="form-select form-select-lg"
+                  formControlName="tamanoEmpresa"
+                  [disabled]="!modoEdicion">
+                  <option *ngFor="let tamano of tamanoOpciones" [value]="tamano.id">
+                    {{ tamano.name }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Dirección Física</label>
+                <input 
+                  type="text" 
+                  class="form-control form-control-lg"
+                  placeholder="Av. del Libertador 1234, CABA"
+                  formControlName="direccionFisica"
+                  [readonly]="!modoEdicion">
+              </div>
+            </div>
+          </div>
+
+          <!-- Descripción y Cultura -->
+          <div class="cards-container bg-white">
+            <div class="d-flex align-items-center gap-2 mb-4">
+              <i class="bi bi-chat-left-quote" style="font-size: 24px; color: #5b6df6;"></i>
+              <div>
+                <h2 class="titulo-seccion mb-0">Descripción y Cultura</h2>
+                <p class="texto-mini mb-0">Define la esencia de tu organización</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Sobre la empresa</label>
+              <textarea 
+                class="form-control form-control-lg"
+                rows="3"
+                placeholder="Describe quién eres, qué hace tu empresa y por qué destaca"
+                formControlName="sobreEmpresa"
+                [readonly]="!modoEdicion"></textarea>
+              <small class="texto-mini">Mínimo 50 caracteres</small>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Misión (Opcional)</label>
+                <textarea 
+                  class="form-control form-control-lg"
+                  rows="2"
+                  placeholder="Escribe tu misión aquí..."
+                  formControlName="mision"
+                  [readonly]="!modoEdicion"></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Visión (Opcional)</label>
+                <textarea 
+                  class="form-control form-control-lg"
+                  rows="2"
+                  placeholder="Escribe tu visión aquí..."
+                  formControlName="vision"
+                  [readonly]="!modoEdicion"></textarea>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Cultura y Beneficios</label>
+              <textarea 
+                class="form-control form-control-lg"
+                rows="3"
+                placeholder="Forjamos un ambiente de trabajo colaborativo, flexible y orientado a objetivos..."
+                formControlName="culturaYBeneficios"
+                [readonly]="!modoEdicion"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Botones Finales -->
+    <div class="d-flex justify-content-end gap-3 mt-4">
+      <button class="btn-cancel" (click)="cancelar()" *ngIf="modoEdicion">Descartar cambios</button>
+      <button class="boton-primario" (click)="toggleEdicion()" *ngIf="!modoEdicion">
+        Editar Información
+      </button>
+      <button class="boton-primario" (click)="guardarCambios()" *ngIf="modoEdicion" [disabled]="!camposModificados || guardando">
+        <span *ngIf="guardando" class="spinner-border spinner-border-sm me-2"></span>
+        Guardar Perfil Institucional
+      </button>
+    </div>
+  </div>
+</section>
+

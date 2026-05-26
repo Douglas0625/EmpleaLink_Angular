@@ -21,7 +21,7 @@ import { empresaGuard } from './guards/empresa-guard';
 import { candidatoGuard } from './guards/usuario-guard';
 
 export const routes: Routes = [
-  { path: '', component: LandingComponent },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: Registro },
   { path: 'ofertas', component: OfertasComponent },

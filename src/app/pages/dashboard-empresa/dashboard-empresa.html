@@ -1,1 +1,214 @@
-<p>dashboard-empresa works!</p>
+<!-- Sección Principal -->
+<section class="py-5 dashboard-empresa-container">
+  <div class="container">
+    <!-- Encabezado -->
+    <div class="mb-5">
+      <h1 class="titulos text-azul mb-2">Panel de Empresa</h1>
+      <p class="parrafos">Gestiona tus vacantes, revisa candidatos y mantente al tanto de las novedades del portal.</p>
+    </div>
+
+    <!-- Botón crear oferta -->
+    <div class="mb-4 d-flex justify-content-end">
+      <button class="boton-primario">
+        <i class="bi bi-plus-lg"></i> Crear Nueva Oferta
+      </button>
+    </div>
+
+    <!-- Grid principal -->
+    <div class="row g-4">
+      <!-- Columna izquierda -->
+      <div class="col-lg-8">
+        <!-- Estadísticas -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <div class="stat-card cards-container bg-white">
+              <div class="stat-icon">
+                <i class="bi bi-briefcase"></i>
+              </div>
+              <div>
+                <p class="stat-label texto-mini">VACANTES ACTIVAS</p>
+                <p class="stat-value">{{ cargandoStats ? '...' : stats.vacantesActivas }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="stat-card cards-container bg-white">
+              <div class="stat-icon">
+                <i class="bi bi-people"></i>
+              </div>
+              <div>
+                <p class="stat-label texto-mini">TOTAL POSTULANTES</p>
+                <p class="stat-value">{{ cargandoStats ? '...' : stats.totalPostulantes }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="stat-card cards-container bg-white">
+              <div class="stat-icon">
+                <i class="bi bi-chat-dots"></i>
+              </div>
+              <div>
+                <p class="stat-label texto-mini">ENTREVISTAS</p>
+                <p class="stat-value">{{ cargandoStats ? '...' : stats.entrevistas }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="stat-card cards-container bg-white">
+              <div class="stat-icon">
+                <i class="bi bi-check-circle"></i>
+              </div>
+              <div>
+                <p class="stat-label texto-mini">VACANTES CERRADAS</p>
+                <p class="stat-value">{{ cargandoStats ? '...' : stats.vacantesCerradas }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mis Ofertas -->
+        <div class="cards-container bg-white mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="titulo-seccion">Mis Ofertas</h2>
+            <a href="#" class="enlace-primario">Ver todas</a>
+          </div>
+          
+          <div class="ofertas-list">
+            <div *ngIf="cargandoOfertas" class="text-center py-4">
+              <div class="spinner-border spinner-border-sm text-azul" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+            </div>
+
+            <div *ngIf="!cargandoOfertas && ofertas.length === 0" class="text-center py-4">
+              <p class="parrafos">No hay ofertas publicadas</p>
+            </div>
+
+            <div *ngFor="let oferta of ofertas; let last = last" class="oferta-item" [class.border-bottom]="!last">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h3 class="titulo-card mb-2">{{ oferta.title || oferta.titulo }}</h3>
+                  <div class="oferta-meta">
+                    <span class="meta-item">
+                      <i class="bi bi-calendar"></i>
+                      {{ formatDate(oferta.published_date || oferta.fecha) }}
+                    </span>
+                    <span class="meta-item">
+                      <i class="bi bi-person-check"></i>
+                      {{ oferta.applications_count || oferta.postulantes || 0 }} postulantes
+                    </span>
+                  </div>
+                </div>
+                <button class="btn-accion" title="Ver ofertas">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Foro EmpleaLink -->
+        <div class="cards-container bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h2 class="titulo-seccion">Foro EmpleaLink</h2>
+              <p class="texto-mini">Novedades para empresas</p>
+            </div>
+            <span class="badge-admin">ADMIN</span>
+          </div>
+
+          <div class="forum-list">
+            <div *ngIf="cargandoForum" class="text-center py-4">
+              <div class="spinner-border spinner-border-sm text-azul" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+            </div>
+
+            <div *ngIf="!cargandoForum && forumPosts.length === 0" class="text-center py-4">
+              <p class="parrafos">No hay posts en el foro</p>
+            </div>
+
+            <div *ngFor="let post of forumPosts; let last = last" class="forum-post" [class.border-bottom]="!last">
+              <div class="post-date">{{ formatDate(post.created_at) }}</div>
+              <h3 class="post-title">{{ post.title }}</h3>
+              <button class="enlace-primario">Ver discusión</button>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-center mt-3">
+            <a href="#" class="enlace-primario">Explorar más discusiones</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna derecha - Perfil de empresa -->
+      <div class="col-lg-4">
+        <div class="cards-container bg-white sticky-profile">
+          <div class="text-center mb-4">
+            <img 
+              *ngIf="empresa?.logo" 
+              [src]="empresa.logo" 
+              alt="Logo de empresa"
+              class="empresa-logo mb-3"
+            >
+            <div *ngIf="!empresa?.logo" class="empresa-logo-placeholder mb-3">
+              <i class="bi bi-building"></i>
+            </div>
+            <h2 class="titulo-card">{{ empresa?.name || 'TechFlow Solutions' }}</h2>
+          </div>
+
+          <div class="profile-info">
+            <div class="info-item mb-3">
+              <i class="bi bi-geo-alt"></i>
+              <span class="parrafos">{{ empresa?.city || 'Buenos Aires, Argentina' }}</span>
+            </div>
+            <div class="info-item mb-3">
+              <i class="bi bi-globe"></i>
+              <span class="parrafos">{{ empresa?.website || 'techflowsolutions.com' }}</span>
+            </div>
+            <div class="info-item mb-3">
+              <i class="bi bi-telephone"></i>
+              <span class="parrafos">{{ empresa?.phone || 'info@techflow.com' }}</span>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 mt-4">
+            <button class="boton-primario flex-grow-1">Editar Perfil</button>
+            <button class="btn-secondary">
+              <i class="bi bi-share"></i>
+            </button>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="profile-section">
+            <h3 class="titulo-card mb-3">Descripción</h3>
+            <p class="parrafos mb-0">
+              {{ empresa?.description || 'Transformamos el futuro laboral conectando talento con empresas líderes en el sector tecnológico.' }}
+            </p>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="profile-section">
+            <h3 class="titulo-card mb-3">Redes Sociales</h3>
+            <div class="social-links d-flex gap-2">
+              <a href="#" class="social-btn" title="Facebook">
+                <i class="bi bi-facebook"></i>
+              </a>
+              <a href="#" class="social-btn" title="Twitter">
+                <i class="bi bi-twitter-x"></i>
+              </a>
+              <a href="#" class="social-btn" title="LinkedIn">
+                <i class="bi bi-linkedin"></i>
+              </a>
+              <a href="#" class="social-btn" title="Instagram">
+                <i class="bi bi-instagram"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

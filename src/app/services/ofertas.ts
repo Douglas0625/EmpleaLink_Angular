@@ -1,31 +1,76 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class OfertasService {
-
-  private apiUrl = 'https://portal-empleo-api-production.up.railway.app/api/ofertas';
+  private apiUrl = 'https://portal-empleo-api-production-481e.up.railway.app';
 
   constructor(private http: HttpClient) {}
 
-  getOfertas(): Observable<any> {
-    return this.http.get(this.apiUrl);
+  /**
+   * Obtiene todas las ofertas de trabajo
+   */
+  getOfertas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/job-posts`)
+      .pipe(
+        catchError(err => {
+          console.error('Error fetching job posts:', err);
+          return of([]);
+        })
+      );
   }
 
+  /**
+   * Obtiene una oferta específica por ID
+   */
   getOfertaById(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`);
+    return this.http.get(`${this.apiUrl}/job-posts/${id}`)
+      .pipe(
+        catchError(err => {
+          console.error('Error fetching job post:', err);
+          return of(null);
+        })
+      );
   }
 
+  /**
+   * Crea una nueva oferta
+   */
   crearOferta(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+    return this.http.post(`${this.apiUrl}/job-posts`, data)
+      .pipe(
+        catchError(err => {
+          console.error('Error creating job post:', err);
+          return of(null);
+        })
+      );
   }
 
+  /**
+   * Actualiza una oferta existente
+   */
   actualizarOferta(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, data);
+    return this.http.put(`${this.apiUrl}/job-posts/${id}`, data)
+      .pipe(
+        catchError(err => {
+          console.error('Error updating job post:', err);
+          return of(null);
+        })
+      );
   }
 
+  /**
+   * Elimina una oferta
+   */
   eliminarOferta(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.apiUrl}/job-posts/${id}`)
+      .pipe(
+        catchError(err => {
+          console.error('Error deleting job post:', err);
+          return of(null);
+        })
+      );
   }
 }
