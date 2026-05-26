@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
-import { Registro } from './pages/registro/registro';
 import { LandingComponent } from './pages/landing/landing';
 import { DashboardAdmin } from './pages/dashboard-admin/dashboard-admin';
 import { DashboardEmpresa } from './pages/dashboard-empresa/dashboard-empresa';
@@ -15,16 +14,19 @@ import { GestionUsuarios } from './pages/gestion-usuarios/gestion-usuarios';
 import { GestionEmpresas } from './pages/gestion-empresas/gestion-empresas';
 import { GestionVacantes } from './pages/gestion-vacantes/gestion-vacantes';
 import { Moderacion } from './pages/moderacion/moderacion';
+import { GestionOfertas } from './pages/gestion-ofertas/gestion-ofertas';
+import { empresaGuard } from './guards/empresa-guard';
+import { authGuard }    from './guards/auth-guard';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'registro', component: Registro },
   { path: 'dashboard-admin', component: DashboardAdmin },
   { path: 'dashboard-empresa', component: DashboardEmpresa },
   { path: 'dashboard-usuario', component: DashboardUsuario },
   { path: 'ofertas', component: OfertasComponent },
   { path: 'ofertas/:id', component: DetalleOferta },
+  { path: 'gestion-ofertas', component: GestionOfertas, canActivate: [authGuard, empresaGuard] },
   { path: 'perfil-usuario', component: PerfilUsuario },
   { path: 'perfil-empresa', component: PerfilEmpresa },
   { path: 'postulaciones', component: Postulaciones },
