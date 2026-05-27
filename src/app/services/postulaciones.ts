@@ -31,7 +31,14 @@ export class PostulacionesService {
     return this.http.get(`${this.apiUrl}/applications/${applicationId}`)
       .pipe(
         catchError(err => {
-          console.error('Error fetching application:', err);
+          console.error(`Error fetching application ${applicationId}:`, err);
+          // Log del error completo para debugging
+          console.error('Full error details:', {
+            status: err.status,
+            statusText: err.statusText,
+            message: err.message,
+            url: err.url
+          });
           return of(null);
         })
       );

@@ -139,25 +139,15 @@
         <div class="candidatos-section">
           <p class="texto-mini mb-3"><strong>Candidatos Recientes</strong></p>
           <div class="d-flex flex-wrap gap-3">
-            <div class="candidato-avatar">
-              <img src="https://i.pravatar.cc/150?img=1" alt="Candidato">
-              <p class="candidato-nombre">Ana Martínez</p>
-              <a href="#" class="enlace-primario">Ver perfil</a>
+            <div *ngFor="let candidato of vacante.candidatos" class="candidato-avatar">
+              <img src="https://i.pravatar.cc/150?img={{candidato.id}}" alt="{{candidato.name}}">
+              <p class="candidato-nombre">{{ candidato.name }}</p>
+              <a href="#" (click)="verPerfilCandidato(candidato, vacante.id); $event.preventDefault()" class="enlace-primario">
+                Ver perfil
+              </a>
             </div>
-            <div class="candidato-avatar">
-              <img src="https://i.pravatar.cc/150?img=2" alt="Candidato">
-              <p class="candidato-nombre">Carlos Ruíz</p>
-              <a href="#" class="enlace-primario">Ver perfil</a>
-            </div>
-            <div class="candidato-avatar">
-              <img src="https://i.pravatar.cc/150?img=3" alt="Candidato">
-              <p class="candidato-nombre">Laura Gómez</p>
-              <a href="#" class="enlace-primario">Ver perfil</a>
-            </div>
-            <div class="candidato-avatar">
-              <img src="https://i.pravatar.cc/150?img=4" alt="Candidato">
-              <p class="candidato-nombre">Mateo Sosa</p>
-              <a href="#" class="enlace-primario">Ver perfil</a>
+            <div *ngIf="!vacante.candidatos || vacante.candidatos.length === 0" class="text-muted">
+              <p class="mb-0">Sin candidatos</p>
             </div>
           </div>
           <p class="texto-mini mt-3">

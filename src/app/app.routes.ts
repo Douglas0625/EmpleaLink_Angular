@@ -7,6 +7,7 @@ import { DashboardEmpresa } from './pages/dashboard-empresa/dashboard-empresa';
 import { DashboardUsuario } from './pages/dashboard-usuario/dashboard-usuario';
 import { OfertasComponent } from './pages/ofertas/ofertas';
 import { DetalleOferta } from './pages/detalle-oferta/detalle-oferta';
+import { DetalleCandidato } from './pages/detalle-candidato/detalle-candidato';
 import { PerfilUsuario } from './pages/perfil-usuario/perfil-usuario';
 import { PerfilEmpresa } from './pages/perfil-empresa/perfil-empresa';
 import { Postulaciones } from './pages/postulaciones/postulaciones';
@@ -27,6 +28,7 @@ export const routes: Routes = [
   { path: 'registro', component: Registro },
   { path: 'ofertas', component: OfertasComponent },
   { path: 'ofertas/:id', component: DetalleOferta },
+  { path: 'candidato/:applicationId/:jobPostId', component: DetalleCandidato, canActivate: [authGuard, empresaGuard] },
   { path: 'dashboard-usuario', component: DashboardUsuario, canActivate: [authGuard, candidatoGuard] },
   { path: 'postulaciones', component: Postulaciones, canActivate: [authGuard, candidatoGuard] },
   { path: 'perfil-usuario', component: PerfilUsuario, canActivate: [authGuard, candidatoGuard] },

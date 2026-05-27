@@ -73,4 +73,17 @@ export class OfertasService {
         })
       );
   }
+
+  /**
+   * Obtiene los candidatos (aplicaciones) de una vacante específica
+   */
+  getCandidatosDeVacante(jobPostId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/job-posts/${jobPostId}/applications`)
+      .pipe(
+        catchError(err => {
+          console.error('Error fetching candidates:', err);
+          return of([]);
+        })
+      );
+  }
 }

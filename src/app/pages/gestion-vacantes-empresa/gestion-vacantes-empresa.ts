@@ -1,9 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { OfertasService } from '../../services/ofertas';
 import { AuthService } from '../../services/auth.service';
+import { forkJoin } from 'rxjs';
+
+interface Candidato {
+  id: string;
+  name: string;
+  email: string;
+  userId?: string;
+  applicationId?: string;
+}
 
 interface Vacante {
   id: string;
@@ -16,6 +25,7 @@ interface Vacante {
   status: { name: string };
   applications_count: number;
   published_date: string;
+  candidatos?: Candidato[];
 }
 
 interface Stats {
@@ -60,7 +70,8 @@ export class GestionVacantesEmpresa implements OnInit {
   constructor(
     private ofertasService: OfertasService,
     private authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
     this.formCrear = this.crearFormularioVacante();
     this.formEditar = this.crearFormularioVacante();
@@ -95,9 +106,38 @@ export class GestionVacantesEmpresa implements OnInit {
     this.ofertasService.getOfertas().subscribe({
       next: (data) => {
         this.vacantes = data;
-        this.calcularEstadisticas();
-        this.aplicarFiltros();
-        this.loading = false;
+        
+        // Cargar candidatos para cada vacante
+        const candidatoRequests = this.vacantes.map(vacante =>
+          forkJoin({
+            vacante: new Promise(resolve => resolve(vacante)),
+            candidatos: this.ofertasService.getCandidatosDeVacante(parseInt(vacante.id))
+          })
+        );
+
+        if (candidatoRequests.length > 0) {
+          forkJoin(candidatoRequests).subscribe({
+            next: (results) => {
+              this.vacantes = results.map((result: any) => ({
+                ...result.vacante,
+                candidatos: this.mapearCandidatos(result.candidatos)
+              }));
+              this.calcularEstadisticas();
+              this.aplicarFiltros();
+              this.loading = false;
+            },
+            error: (err) => {
+              console.error('Error loading candidates:', err);
+              this.calcularEstadisticas();
+              this.aplicarFiltros();
+              this.loading = false;
+            }
+          });
+        } else {
+          this.calcularEstadisticas();
+          this.aplicarFiltros();
+          this.loading = false;
+        }
       },
       error: (err) => {
         console.error('Error loading vacantes:', err);
@@ -107,6 +147,21 @@ export class GestionVacantesEmpresa implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  /**
+   * Mapea los candidatos desde la API
+   */
+  private mapearCandidatos(aplicaciones: any[]): Candidato[] {
+    if (!Array.isArray(aplicaciones)) return [];
+    
+    return aplicaciones.slice(0, 4).map((app: any) => ({
+      id: app.profile_id?.toString() || app.id?.toString() || Math.random().toString(),
+      name: app.applicant_name || app.user?.name || 'Candidato',
+      email: app.applicant_email || app.user?.email || 'email@ejemplo.com',
+      userId: app.user_id?.toString() || '',
+      applicationId: app.id?.toString() || ''
+    }));
   }
 
   /**
@@ -324,5 +379,16 @@ export class GestionVacantesEmpresa implements OnInit {
       return 'success';
     }
     return 'danger';
+  }
+
+  /**
+   * Navega al perfil del candidato
+   */
+  verPerfilCandidato(candidato: Candidato, jobPostId: string): void {
+    if (!candidato.applicationId || !jobPostId) {
+      alert('No se puede acceder al perfil del candidato');
+      return;
+    }
+    this.router.navigate(['/detalle-candidato', candidato.applicationId, jobPostId]);
   }
 }
