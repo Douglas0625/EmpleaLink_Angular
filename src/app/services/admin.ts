@@ -30,7 +30,7 @@ export class AdminService {
     return this.http.get(`${API_URL}/moderation/actions`);
   }
   updateUser(userId: number, data: any): Observable<any> {
-    return this.http.patch(`${API_URL}/users/${userId}`, data);
+    return this.http.put(`${API_URL}/users/${userId}`, data);
   }
   postForumPost(data: any): Observable<any> {
     return this.http.post(`${API_URL}/forum/posts`, data);
