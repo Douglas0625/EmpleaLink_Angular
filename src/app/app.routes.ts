@@ -23,7 +23,8 @@ import { PerfilEmpresaPublico } from './pages/perfil-empresa-publico/perfil-empr
 import { DetalleCandidato } from './pages/detalle-candidato/detalle-candidato';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'landing', pathMatch: 'full' },
+  { path: 'landing', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard-admin', component: DashboardAdmin },
   { path: 'dashboard-empresa', component: DashboardEmpresa },

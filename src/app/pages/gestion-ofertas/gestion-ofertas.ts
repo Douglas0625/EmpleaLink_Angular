@@ -355,26 +355,43 @@ export class GestionOfertas implements OnInit {
       const alertas    = this.norm(alertasResp);
       const perfiles   = this.norm(perfilesResp);
       const existentes = this.norm(notifResp);
-      const textoVacante  = `${jobPost.title || ''} ${jobPost.description || ''}`.toLowerCase();
+
+      const textoVacante     = `${jobPost.title || ''} ${jobPost.description || ''}`.toLowerCase();
       const modalidadVacante = String(jobPost.modality || '').toLowerCase();
 
       for (const alerta of alertas) {
-        if (!alerta.is_active) continue;
+        // ✅ Fix: convertir a booleano robusto (acepta 0/1/"0"/"1"/true/false)
+        const activa  = Number(alerta.is_active) === 1 || alerta.is_active === true;
+        if (!activa) continue;
+
         const perfil = perfiles.find((p: any) => Number(p.id) === Number(alerta.profile_id));
         if (!perfil?.user_id) continue;
 
-        const keywords = String(alerta.keywords || '').split(',').map((k: string) => k.trim().toLowerCase()).filter(Boolean);
-        const coincideKeyword = keywords.length === 0 || keywords.some((k: string) => textoVacante.includes(k));
+        const keywords = String(alerta.keywords || '')
+          .split(',')
+          .map((k: string) => k.trim().toLowerCase())
+          .filter(Boolean);
+
+        const coincideKeyword =
+          keywords.length === 0 ||
+          keywords.some((k: string) => textoVacante.includes(k));
+
+        // ✅ Fix: conversión robusta de modalidades
+        const remoto  = Number(alerta.remote) === 1 || alerta.remote === true;
+        const onsite  = Number(alerta.onsite) === 1 || alerta.onsite === true;
+        const hybrid  = Number(alerta.hybrid) === 1 || alerta.hybrid === true;
+
         const coincideModalidad =
-          (modalidadVacante === 'remote' && alerta.remote) ||
-          (modalidadVacante === 'onsite' && alerta.onsite) ||
-          (modalidadVacante === 'hybrid' && alerta.hybrid);
+          (modalidadVacante === 'remote'  && remoto)  ||
+          (modalidadVacante === 'onsite'  && onsite)  ||
+          (modalidadVacante === 'hybrid'  && hybrid);
 
         if (!coincideKeyword || !coincideModalidad) continue;
 
         const yaExiste = existentes.some((n: any) =>
           Number(n.user_id) === Number(perfil.user_id) &&
-          String(n.message || '').toLowerCase().includes((jobPost.title || '').toLowerCase())
+          String(n.message || '').toLowerCase()
+            .includes((jobPost.title || '').toLowerCase())
         );
         if (yaExiste) continue;
 
@@ -385,7 +402,9 @@ export class GestionOfertas implements OnInit {
           is_read: false
         }).toPromise();
       }
-    } catch { /* notificaciones no bloquean */ }
+    } catch (err) {
+      console.error('Error generando notificaciones:', err);
+    }
   }
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
