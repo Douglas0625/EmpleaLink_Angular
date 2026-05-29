@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
+import { forkJoin, firstValueFrom } from 'rxjs';
 import { SesionUsuario } from '../../models/sesion.model';
 
 const API = 'https://portal-empleo-api-production-481e.up.railway.app';
@@ -201,18 +201,35 @@ export class GestionOfertas implements OnInit {
 
     try {
       if (this.ofertaEditId) {
+        // EDITAR — actualiza localmente de inmediato
         await this.actualizarOferta(this.ofertaEditId, payload);
+
+        const idx = this.ofertasGlobales.findIndex(o => String(o.id) === String(this.ofertaEditId));
+        if (idx !== -1) {
+          this.ofertasGlobales[idx] = { ...this.ofertasGlobales[idx], ...payload };
+        }
         this.mensajeModal = 'Oferta actualizada con éxito.';
+
       } else {
+        // CREAR — agrega la nueva oferta localmente de inmediato
         const nueva: any = await this.http.post(`${API}/job-posts`, payload).toPromise();
-        if (Number(payload.status_id) === 2 && nueva?.id) {
-          await this.generarNotificaciones({ ...payload, id: nueva.id });
+        if (nueva?.id) {
+          this.ofertasGlobales = [{ ...payload, id: nueva.id, created_at: new Date().toISOString() }, ...this.ofertasGlobales];
+          if (Number(payload.status_id) === 2) {
+            await this.generarNotificaciones({ ...payload, id: nueva.id });
+          }
         }
         this.mensajeModal = 'Oferta creada con éxito.';
       }
+
       this.mensajeExito = true;
-      await this.cargarDatos();
+
+      // Recalcula stats y vista con los datos locales ya actualizados
+      this.calcularStats();
+      this.aplicarFiltros();
+
       setTimeout(() => this.cerrarModal('modalOferta'), 700);
+
     } catch {
       this.mensajeModal = 'No se pudo guardar la oferta.';
       this.mensajeExito = false;
@@ -223,81 +240,45 @@ export class GestionOfertas implements OnInit {
 
   // ─── Carga de datos ───────────────────────────────────────────────────────
 
-  private cargarDatos(): void {
+  private async cargarDatos(): Promise<void> {
     this.loading = true;
 
-    forkJoin({
-      companies:    this.http.get<any>(`${API}/company-profiles`),
-      jobs:         this.http.get<any>(`${API}/job-posts`),
-      applications: this.http.get<any>(`${API}/applications`),
-      profiles:     this.http.get<any>(`${API}/profiles`),
-      users:        this.http.get<any>(`${API}/users`)
-    }).subscribe({
+    try {
+      const { companies, jobs, applications, profiles, users } = await firstValueFrom(
+        forkJoin({
+          companies:    this.http.get<any>(`${API}/company-profiles`),
+          jobs:         this.http.get<any>(`${API}/job-posts`),
+          applications: this.http.get<any>(`${API}/applications`),
+          profiles:     this.http.get<any>(`${API}/profiles`),
+          users:        this.http.get<any>(`${API}/users`)
+        })
+      );
 
-      next: ({ companies, jobs, applications, profiles, users }) => {
+      const listaEmpresas = this.norm(companies);
+      const listaJobs     = this.norm(jobs);
+      const listaApps     = this.norm(applications);
+      const listaPerfiles = this.norm(profiles);
 
-        // DEBUG
-        console.log('SESION:', this.sesion);
+      this.empresaActual = listaEmpresas.find(
+        (e: any) => Number(e.user_id) === Number(this.sesion?.id)
+      ) || null;
 
-        const listaEmpresas = this.norm(companies);
-        const listaJobs     = this.norm(jobs);
-        const listaApps     = this.norm(applications);
-        const listaPerfiles = this.norm(profiles);
-        const listaUsers    = this.norm(users);
+      if (!this.empresaActual) { this.loading = false; return; }
 
-        console.log('EMPRESAS:', listaEmpresas);
-        console.log('JOBS:', listaJobs);
+      this.ofertasGlobales      = listaJobs.filter(
+        (j: any) => Number(j.company_profile_id) === Number(this.empresaActual.id)
+      );
+      this.aplicacionesGlobales = listaApps;
+      this.perfilesGlobales     = listaPerfiles;
 
-        // ─────────────────────────────────────────────
-        // BUSCAR EMPRESA DEL USUARIO LOGUEADO
-        // user.id -> company_profiles.user_id
-        // ─────────────────────────────────────────────
+      this.calcularStats();
+      this.aplicarFiltros();
 
-        this.empresaActual = listaEmpresas.find(
-          (e: any) =>
-            Number(e.user_id) === Number(this.sesion?.id)
-        ) || null;
-
-        console.log('EMPRESA ACTUAL:', this.empresaActual);
-
-        // SI NO ENCUENTRA PERFIL
-        if (!this.empresaActual) {
-
-          console.error('NO SE ENCONTRÓ PERFIL DE EMPRESA');
-
-          this.loading = false;
-          return;
-        }
-
-        // ─────────────────────────────────────────────
-        // FILTRAR OFERTAS DE ESA EMPRESA
-        // job.company_profile_id -> company_profiles.id
-        // ─────────────────────────────────────────────
-
-        this.ofertasGlobales = listaJobs.filter(
-          (j: any) =>
-            Number(j.company_profile_id) === Number(this.empresaActual.id)
-        );
-
-        console.log('OFERTAS FILTRADAS:', this.ofertasGlobales);
-
-        this.aplicacionesGlobales = listaApps;
-        this.perfilesGlobales     = listaPerfiles;
-        this.usuariosGlobales     = listaUsers;
-
-        this.calcularStats();
-        this.aplicarFiltros();
-
-        this.loading = false;
-      },
-
-      error: (err) => {
-
-        console.error('ERROR CARGANDO DATOS:', err);
-
-        this.loading = false;
-      }
-    });
+    } catch (err) {
+      console.error('ERROR CARGANDO DATOS:', err);
+    } finally {
+      this.loading = false;
+    }
   }
 
   private calcularStats(): void {

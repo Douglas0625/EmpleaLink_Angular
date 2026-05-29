@@ -278,15 +278,20 @@ export class PerfilUsuario implements OnInit {
     if (!this.expEmpresa || !this.expPuesto || !this.expFechaInicio) {
       alert('Completa empresa, puesto y fecha de inicio.'); return;
     }
-    const payload = {
+
+    const payload: any = {
       profile_id: this.profileActual.id,
       company_name: this.expEmpresa,
       job_title: this.expPuesto,
-      start_date: this.toISO(this.expFechaInicio),
-      end_date: this.expActual ? null : this.toISO(this.expFechaFin),
+      start_date: this.expFechaInicio,
       is_current: this.expActual,
       description: this.expDescripcion
     };
+
+    if (!this.expActual && this.expFechaFin) {
+      payload.end_date = this.expFechaFin;
+    }
+
     this.usuarioService.postWorkExperience(payload).subscribe({
       next: () => {
         bootstrap.Modal.getInstance(document.getElementById('modalExperiencia'))?.hide();
@@ -294,7 +299,7 @@ export class PerfilUsuario implements OnInit {
         this.recargarExperiencias();
         alert('Experiencia agregada.');
       },
-      error: () => alert('No se pudo guardar la experiencia.')
+      error: (err) => alert('No se pudo guardar la experiencia.')
     });
   }
 
@@ -317,22 +322,20 @@ export class PerfilUsuario implements OnInit {
     if (!this.eduInstitucion || !this.eduFechaInicio) {
       alert('Completa institución y fecha de inicio.'); return;
     }
-    const payload = {
+
+    const payload: any = {
       profile_id: this.profileActual.id,
       degree_id: this.eduGradoId ? Number(this.eduGradoId) : null,
       institution: this.eduInstitucion,
       custom_degree_name: this.eduTituloPersonalizado,
-      start_date: this.eduFechaInicio
-        ? new Date(this.eduFechaInicio).toISOString()
-        : null,
-
-      end_date: this.eduActual
-        ? null
-        : (this.eduFechaFin
-            ? new Date(this.eduFechaFin).toISOString()
-            : null),
+      start_date: new Date(this.eduFechaInicio).toISOString(),
       is_current: this.eduActual
     };
+
+    if (!this.eduActual && this.eduFechaFin) {
+      payload.end_date = new Date(this.eduFechaFin).toISOString();
+    }
+
     this.usuarioService.postEducation(payload).subscribe({
       next: () => {
         bootstrap.Modal.getInstance(document.getElementById('modalEducacion'))?.hide();
@@ -340,17 +343,7 @@ export class PerfilUsuario implements OnInit {
         this.recargarEducacion();
         alert('Educación agregada.');
       },
-      error: (err) => {
-        console.log('ERROR EDUCACION:', err);
-
-        console.log('STATUS:', err.status);
-
-        console.log('BODY:', err.error);
-
-        console.log('PAYLOAD:', payload);
-
-        alert(JSON.stringify(err.error));
-      }
+      error: (err) => alert('No se pudo guardar la educación.')
     });
   }
 
