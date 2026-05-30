@@ -150,8 +150,10 @@
           </div>
         </aside>
 
-        <!-- ── COL CENTRO: Foro ─────────────────────────────── -->
-        <div class="de-col-center">
+        <!-- ── COL CENTRO: Foro + Valoraciones ────────────────── -->
+        <div class="de-col-center" style="display:flex;flex-direction:column;gap:24px;">
+
+          <!-- Foro card -->
           <div class="de-forum-card">
 
             <!-- Header -->
@@ -207,6 +209,82 @@
             </div>
 
           </div>
+
+          <!-- ── VALORACIONES DE MI EMPRESA ──────────────────────── -->
+          <div class="de-reviews-card">
+
+            <!-- Header con promedio -->
+            <div class="de-reviews-header">
+              <div>
+                <h4 class="fw-bold mb-1">Valoraciones recibidas</h4>
+                <p class="text-secondary mb-0">Lo que opinan los candidatos sobre tu empresa</p>
+              </div>
+
+              <!-- Promedio numérico -->
+              <div class="de-reviews-avg" *ngIf="totalValoraciones > 0">
+                <span class="de-reviews-avg-num">{{ promedioRating }}</span>
+                <div class="de-reviews-avg-stars">
+                  <i
+                    *ngFor="let s of [1,2,3,4,5]"
+                    class="bi"
+                    [class.bi-star-fill]="esFull(s, promedioRating)"
+                    [class.bi-star]="!esFull(s, promedioRating)"
+                    style="color:#F59E0B;font-size:14px;"
+                  ></i>
+                </div>
+                <small class="text-secondary" style="font-size:0.75rem;">
+                  {{ totalValoraciones }} valoracion{{ totalValoraciones === 1 ? '' : 'es' }}
+                </small>
+              </div>
+            </div>
+
+            <!-- Sin valoraciones -->
+            <div class="de-reviews-empty" *ngIf="totalValoraciones === 0">
+              <i class="bi bi-chat-heart de-reviews-empty-icon"></i>
+              <p class="mb-0">Aún no has recibido valoraciones.</p>
+              <small class="text-secondary">Los candidatos que postulen podrán dejarte una reseña.</small>
+            </div>
+
+            <!-- Lista de valoraciones -->
+            <div
+              *ngFor="let rev of valoraciones; let last = last; trackBy: trackById"
+              class="de-review-item"
+              [class.de-review-item--last]="last"
+            >
+              <!-- Avatar + datos -->
+              <div class="de-review-author-row">
+                <div class="de-review-avatar">{{ rev.inicialesAutor }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <!-- Estrellas -->
+                    <div class="de-review-stars">
+                      <i
+                        *ngFor="let s of rev.estrellas"
+                        class="bi"
+                        [class.bi-star-fill]="esFull(s, rev.rating)"
+                        [class.bi-star]="!esFull(s, rev.rating)"
+                      ></i>
+                    </div>
+                    <span class="de-review-rating-num">{{ rev.rating }}/5</span>
+                  </div>
+                  <small class="text-secondary" style="font-size:0.75rem;">
+                    {{ rev.fechaFormateada }}
+                  </small>
+                </div>
+              </div>
+
+              <!-- Comentario -->
+              <p class="de-review-comment" *ngIf="rev.comment">
+                "{{ rev.comment }}"
+              </p>
+              <p class="de-review-comment text-secondary fst-italic" *ngIf="!rev.comment">
+                Sin comentario adicional.
+              </p>
+            </div>
+
+          </div>
+          <!-- /valoraciones -->
+
         </div>
 
         <!-- ── COL DERECHA: Mis Ofertas ─────────────────────── -->

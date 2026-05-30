@@ -738,10 +738,122 @@
   margin-top: 0 !important;
 }
 
-.de-feedback-msg {
-  font-size: 0.85rem;
-  font-family: sans-serif;
-  margin-bottom: 16px;
+
+/* ══════════════════════════════════════════════════════════════
+   VALORACIONES CARD  (de-reviews-*)
+   ══════════════════════════════════════════════════════════════ */
+.de-reviews-card {
+  background: var(--de-card-white);
+  border-radius: var(--de-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--de-shadow);
+}
+
+/* ── Header con promedio ──────────────────────────────────────── */
+.de-reviews-header {
+  background: #f7f7fb;
+  padding: 28px 28px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.de-reviews-avg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--de-brand-light);
+  border-radius: var(--de-radius-sm);
+  padding: 12px 20px;
+  min-width: 90px;
+}
+
+.de-reviews-avg-num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--de-brand);
+  line-height: 1;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.de-reviews-avg-stars {
+  display: flex;
+  gap: 2px;
+}
+
+/* ── Sin valoraciones ─────────────────────────────────────────── */
+.de-reviews-empty {
+  padding: 40px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   text-align: center;
-  font-weight: 600;
+  color: var(--de-muted);
+  font-family: sans-serif;
+  border-top: 1px solid var(--de-border);
+}
+
+.de-reviews-empty-icon {
+  font-size: 2.2rem;
+  color: var(--de-brand);
+  opacity: 0.4;
+}
+
+/* ── Items de review ──────────────────────────────────────────── */
+.de-review-item {
+  padding: 20px 28px;
+  border-top: 1px solid var(--de-border);
+}
+
+.de-review-item--last {
+  border-bottom: none;
+}
+
+.de-review-author-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.de-review-avatar {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 10px;
+  background: var(--de-brand-light);
+  color: var(--de-brand);
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+}
+
+.de-review-stars {
+  display: flex;
+  gap: 2px;
+  color: #F59E0B;
+  font-size: 13px;
+}
+
+.de-review-rating-num {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--de-text);
+  font-family: sans-serif;
+}
+
+.de-review-comment {
+  font-size: 0.85rem;
+  color: var(--de-muted);
+  font-family: sans-serif;
+  line-height: 1.55;
+  margin: 0;
+  padding-left: 50px;   /* alinea con el texto del avatar */
 }
