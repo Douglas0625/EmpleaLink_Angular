@@ -74,58 +74,29 @@
       <!-- COLUMNA IZQUIERDA -->
       <div class="fuente-inter" style="flex: 1; min-width: 0;">
 
-        <!-- FORM PUBLICACIÓN -->
-        <div class="p-5 rounded-4" style="background-color:white;">
-          <div class="py-3 d-flex justify-content-start align-items-center">
-            <div class="d-flex justify-content-center align-items-center rounded-3"
-                 style="width:60px;height:60px;background-color:rgba(79,70,229,0.08);">
-              <i class="bi bi-file-earmark-plus fs-3" style="color:#554DEF;"></i>
+        <!-- ACCESO GESTIÓN FORO -->
+        <div class="p-5 rounded-4 mb-4" style="background-color:white;">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-4">
+              <div class="d-flex justify-content-center align-items-center rounded-3"
+                style="width:60px;height:60px;background-color:rgba(79,70,229,0.08);">
+                <i class="bi bi-chat-square-text fs-3" style="color:#554DEF;"></i>
+              </div>
+              <div>
+                <h2 class="titulos fuente-inter mb-1">Foro y Recursos</h2>
+                <p class="subtitulos fuente-inter mb-0">
+                  Gestiona las publicaciones y recursos de la comunidad.
+                </p>
+              </div>
             </div>
-            <h1 class="fw-bold ps-4 titulos fuente-inter">Publicar en el Foro / Recurso</h1>
-          </div>
-          <p class="pb-4 subtitulos fuente-inter">Crea nuevas entradas de noticias, consejos o recursos para la comunidad</p>
-
-          <div class="row g-3">
-            <div class="col-md-8">
-              <label class="form-label subtexto fw-bold">Titulo de la Publicacion</label>
-              <input type="text" class="form-control rounded-4" style="height:50px;"
-                     placeholder="Ej. Nuevas tendencias de IT 2024"
-                     [(ngModel)]="titulo" name="titulo">
-            </div>
-            <div class="col-md-4">
-              <label class="form-label subtexto fw-bold">Tipo de Contenido</label>
-              <select class="form-select rounded-4" style="height:50px;"
-                      [(ngModel)]="tipoContenido" (change)="onTipoContenidoChange()" name="tipo">
-                <option>Entrada de Foro</option>
-                <option>Noticias</option>
-              </select>
-            </div>
-            <div class="col-6">
-              <label class="form-label subtexto fw-bold">Enlace de imagen o Recurso</label>
-              <input type="url" class="form-control rounded-4" style="height:50px;"
-                     placeholder="https://ejemplo.com/imagen.jpg"
-                     [(ngModel)]="imagen" name="imagen">
-            </div>
-            <div class="col-6">
-              <label class="form-label subtexto fw-bold">Categoria</label>
-              <select class="form-select rounded-4" style="height:50px;"
-                      [(ngModel)]="categoria" name="categoria">
-                <option *ngFor="let op of categoriasOptions" [value]="op">{{ op }}</option>
-              </select>
-            </div>
-            <div class="mb-3 col-12">
-              <label class="form-label subtexto fw-bold">Mensaje / Contenido</label>
-              <textarea class="form-control rounded-4" rows="4"
-                        placeholder="Escribe el cuerpo de tu Publicacion Aqui."
-                        [(ngModel)]="contenido" name="contenido"></textarea>
-            </div>
-            <div class="col-12 d-flex justify-content-end">
-              <button class="rounded-4 boton-primario-grande" (click)="onSubmitPublicacion()">
-                <i class="bi bi-send"></i> Publicar Ahora
+            <a routerLink="/gestion-foro">
+              <button class="boton-primario-grande">
+                <i class="bi bi-pencil-square me-2"></i>Gestionar
               </button>
-            </div>
+            </a>
           </div>
         </div>
+
 
         <!-- TABLA GESTIÓN DE USUARIOS -->
         <div class="card border-0 rounded-5 p-5 my-5">
