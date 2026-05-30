@@ -80,7 +80,7 @@ export class UsuarioService {
    * Obtiene posts del foro
    */
   getPosts(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/forum-posts`)
+    return this.http.get<any[]>(`${this.API_URL}/forum/posts`)
       .pipe(
         catchError(err => {
           console.error('Error fetching posts:', err);
@@ -93,7 +93,7 @@ export class UsuarioService {
    * Obtiene comentarios del foro
    */
   getComments(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/forum-comments`)
+    return this.http.get<any[]>(`${this.API_URL}/forum/comments`)
       .pipe(
         catchError(err => {
           console.error('Error fetching comments:', err);
