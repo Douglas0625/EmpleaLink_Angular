@@ -1,0 +1,228 @@
+<!-- HERO -->
+<section class="pb-4" style="background-color:#ECEDF4;">
+  <div class="container d-flex flex-column align-items-start gap-2 py-4">
+    <a routerLink="/dashboard-admin" class="fw-bold nav-link" style="color:#554DEF;">
+      <small><i class="bi bi-arrow-left"></i> Volver al Dashboard</small>
+    </a>
+    <h1 class="titulos mb-0">Gestión de <span class="text-azul">Foro y Recursos</span></h1>
+    <p class="subtitulos fuente-inter mb-0">
+      Crea, edita y elimina entradas del foro y recursos para la comunidad.
+    </p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="container">
+    <div class="tabs-wrapper d-flex gap-2">
+      <button class="tab-btn" [class.active]="tabActiva === 'foro'"
+        (click)="cambiarTab('foro')" type="button">
+        <i class="bi bi-chat-square-text me-2"></i>Foro
+      </button>
+      <button class="tab-btn" [class.active]="tabActiva === 'recurso'"
+        (click)="cambiarTab('recurso')" type="button">
+        <i class="bi bi-journal-bookmark me-2"></i>Recursos
+      </button>
+    </div>
+  </div>
+</section>
+
+<section style="background-color:#ECEDF4;" class="pb-5">
+  <div class="container pt-4">
+    <div class="row g-4">
+
+      <!-- ── COLUMNA IZQUIERDA: FORMULARIO ── -->
+      <div class="col-lg-5">
+        <div class="form-card">
+
+          <!-- Header formulario -->
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="form-icon">
+              <i class="bi" [class.bi-chat-square-text]="tabActiva === 'foro'"
+                [class.bi-journal-bookmark]="tabActiva === 'recurso'"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-0 fuente-inter">
+                {{ modoEdicion ? 'Editar' : 'Nueva' }}
+                {{ tabActiva === 'foro' ? 'entrada de foro' : 'recurso' }}
+              </h5>
+              <small class="text-secondary">
+                {{ modoEdicion ? 'Modifica los campos y guarda.' : 'Completa los campos y publica.' }}
+              </small>
+            </div>
+          </div>
+
+          <!-- ── FORM FORO ── -->
+          <div *ngIf="tabActiva === 'foro'">
+            <div class="mb-3">
+              <label class="texto-etiqueta mb-1">Título *</label>
+              <input type="text" class="form-control rounded-4"
+                [(ngModel)]="fTitulo" placeholder="Ej. Nuevas tendencias IT 2026">
+            </div>
+            <div class="mb-3">
+              <label class="texto-etiqueta mb-1">Categoría</label>
+              <select class="form-select rounded-4" [(ngModel)]="fCategoria">
+                <option *ngFor="let op of categoriasForoOps" [value]="op">{{ op }}</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="texto-etiqueta mb-1">Contenido *</label>
+              <textarea class="form-control rounded-4" rows="5"
+                [(ngModel)]="fContenido"
+                placeholder="Escribe el cuerpo de la publicación..."></textarea>
+            </div>
+
+            <p *ngIf="mensaje" class="small text-center fw-semibold mb-3"
+              [class.text-success]="mensajeOk" [class.text-danger]="!mensajeOk">
+              {{ mensaje }}
+            </p>
+
+            <div class="d-flex gap-2 justify-content-end">
+              <button *ngIf="modoEdicion" class="btn-cancel" type="button"
+                (click)="cancelarEdicion()">Cancelar</button>
+              <button class="btn-save" type="button"
+                (click)="guardarForo()" [disabled]="guardando">
+                <span *ngIf="guardando" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!guardando" class="bi bi-send me-2"></i>
+                {{ modoEdicion ? 'Guardar cambios' : 'Publicar en foro' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- ── FORM RECURSO ── -->
+          <div *ngIf="tabActiva === 'recurso'">
+            <div class="mb-3">
+              <label class="texto-etiqueta mb-1">Título *</label>
+              <input type="text" class="form-control rounded-4"
+                [(ngModel)]="rTitulo" placeholder="Ej. Guía para entrevistas">
+            </div>
+            <div class="mb-3">
+              <label class="texto-etiqueta mb-1">Tipo de recurso</label>
+              <select class="form-select rounded-4" [(ngModel)]="rTipo">
+                <option *ngFor="let op of categoriasRecursoOps" [value]="op">{{ op }}</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="texto-etiqueta mb-1">Descripción *</label>
+              <textarea class="form-control rounded-4" rows="4"
+                [(ngModel)]="rDescripcion"
+                placeholder="Describe el contenido del recurso..."></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="texto-etiqueta mb-1">URL del recurso</label>
+              <input type="url" class="form-control rounded-4"
+                [(ngModel)]="rUrl" placeholder="https://ejemplo.com/recurso">
+            </div>
+            <div class="mb-3">
+              <label class="texto-etiqueta mb-1">URL de imagen</label>
+              <input type="url" class="form-control rounded-4"
+                [(ngModel)]="rImagen" placeholder="https://ejemplo.com/imagen.jpg">
+            </div>
+
+            <p *ngIf="mensaje" class="small text-center fw-semibold mb-3"
+              [class.text-success]="mensajeOk" [class.text-danger]="!mensajeOk">
+              {{ mensaje }}
+            </p>
+
+            <div class="d-flex gap-2 justify-content-end">
+              <button *ngIf="modoEdicion" class="btn-cancel" type="button"
+                (click)="cancelarEdicion()">Cancelar</button>
+              <button class="btn-save" type="button"
+                (click)="guardarRecurso()" [disabled]="guardando">
+                <span *ngIf="guardando" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!guardando" class="bi bi-journal-plus me-2"></i>
+                {{ modoEdicion ? 'Guardar cambios' : 'Publicar recurso' }}
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── COLUMNA DERECHA: LISTA ── -->
+      <div class="col-lg-7">
+        <div class="lista-card">
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold fuente-inter mb-0">
+              {{ tabActiva === 'foro' ? 'Entradas publicadas' : 'Recursos publicados' }}
+            </h5>
+            <span class="badge rounded-pill px-3 py-2"
+              style="background:rgba(85,77,239,0.1);color:#554DEF;">
+              {{ tabActiva === 'foro' ? postsForo.length : postsRecurso.length }} publicaciones
+            </span>
+          </div>
+
+          <!-- Loading -->
+          <div *ngIf="loading" class="text-center py-5">
+            <div class="spinner-border" style="color:#554DEF;"></div>
+          </div>
+
+          <!-- ── LISTA FORO ── -->
+          <ng-container *ngIf="!loading && tabActiva === 'foro'">
+            <p *ngIf="postsForo.length === 0" class="text-secondary text-center py-4">
+              Aún no has publicado entradas en el foro.
+            </p>
+            <div *ngFor="let post of postsForo" class="post-item">
+              <div class="d-flex justify-content-between align-items-start gap-3">
+                <div style="flex:1;min-width:0;">
+                  <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                    <span class="cat-badge">{{ post.categoria }}</span>
+                    <small class="text-secondary">{{ post.fecha }}</small>
+                  </div>
+                  <h6 class="fw-bold fuente-inter mb-1">{{ post.titulo }}</h6>
+                  <p class="text-secondary fuente-inter mb-0"
+                    style="font-size:13px;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;">
+                    {{ post.contenido }}
+                  </p>
+                </div>
+                <div class="d-flex gap-2 flex-shrink-0">
+                  <button class="btn-accion editar" title="Editar"
+                    (click)="editarForo(post)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn-accion eliminar" title="Eliminar"
+                    (click)="eliminarForo(post.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- ── LISTA RECURSOS ── -->
+          <ng-container *ngIf="!loading && tabActiva === 'recurso'">
+            <p *ngIf="postsRecurso.length === 0" class="text-secondary text-center py-4">
+              Aún no has publicado recursos.
+            </p>
+            <div *ngFor="let post of postsRecurso" class="post-item">
+              <div class="d-flex justify-content-between align-items-start gap-3">
+                <div style="flex:1;min-width:0;">
+                  <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                    <span class="cat-badge recurso">{{ post.categoria }}</span>
+                    <small class="text-secondary">{{ post.fecha }}</small>
+                  </div>
+                  <h6 class="fw-bold fuente-inter mb-1">{{ post.titulo }}</h6>
+                  <p class="text-secondary fuente-inter mb-0"
+                    style="font-size:13px;overflow:hidden;display:-webkit-box;;-webkit-box-orient:vertical;">
+                    {{ post.contenido }}
+                  </p>
+                </div>
+                <div class="d-flex gap-2 flex-shrink-0">
+                  <button class="btn-accion editar" title="Editar"
+                    (click)="editarRecurso(post)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn-accion eliminar" title="Eliminar"
+                    (click)="eliminarRecurso(post.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

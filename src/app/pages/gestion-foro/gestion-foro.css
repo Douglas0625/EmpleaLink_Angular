@@ -1,0 +1,153 @@
+/* ─── TABS ───────────────────────────────────────────────────────────────── */
+.tabs-wrapper {
+  border-bottom: 2px solid #dde0f0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.tab-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6f7894;
+  background: transparent;
+  border: none;
+  padding: 10px 20px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+
+  &:hover { color: #554DEF; }
+
+  &.active {
+    color: #554DEF;
+    border-bottom-color: #554DEF;
+    font-weight: 600;
+  }
+}
+
+/* ─── CARDS ──────────────────────────────────────────────────────────────── */
+.form-card,
+.lista-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 2px 8px rgba(31, 35, 51, 0.06);
+}
+
+/* ─── FORM ICON ──────────────────────────────────────────────────────────── */
+.form-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(85, 77, 239, 0.08);
+  color: #554DEF;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ─── FORM CONTROLS ──────────────────────────────────────────────────────── */
+.form-card .form-control,
+.form-card .form-select {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  border-color: #e9ebf5;
+  background-color: #fafbff;
+  padding: 10px 14px;
+
+  &:focus {
+    border-color: #554DEF;
+    box-shadow: 0 0 0 3px rgba(85, 77, 239, 0.1);
+    background-color: #fff;
+  }
+}
+
+/* ─── BOTONES FORM ───────────────────────────────────────────────────────── */
+.btn-save {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  background: #554DEF;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) { background: #4a41d4; }
+  &:disabled { opacity: 0.7; cursor: not-allowed; }
+}
+
+.btn-cancel {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  background: transparent;
+  color: #6f7894;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover { background: #ecedf4; }
+}
+
+/* ─── LISTA POSTS ────────────────────────────────────────────────────────── */
+.post-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f1f8;
+
+  &:last-child { border-bottom: none; }
+}
+
+/* ─── CATEGORIA BADGE ────────────────────────────────────────────────────── */
+.cat-badge {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #554DEF;
+  background: rgba(85, 77, 239, 0.08);
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
+  &.recurso {
+    color: #22C55E;
+    background: rgba(34, 197, 94, 0.1);
+  }
+}
+
+/* ─── BOTONES ACCIÓN ─────────────────────────────────────────────────────── */
+.btn-accion {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+
+  &.editar {
+    background: rgba(85, 77, 239, 0.08);
+    color: #554DEF;
+
+    &:hover { background: rgba(85, 77, 239, 0.18); }
+  }
+
+  &.eliminar {
+    background: rgba(239, 68, 68, 0.08);
+    color: #ef4444;
+
+    &:hover { background: rgba(239, 68, 68, 0.18); }
+  }
+}

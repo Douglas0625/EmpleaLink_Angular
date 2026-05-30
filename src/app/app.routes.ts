@@ -21,6 +21,8 @@ import { empresaGuard } from './guards/empresa-guard';
 import { candidatoGuard } from './guards/usuario-guard';
 import { PerfilEmpresaPublico } from './pages/perfil-empresa-publico/perfil-empresa-publico';
 import { DetalleCandidato } from './pages/detalle-candidato/detalle-candidato';
+import { GestionForo } from './pages/gestion-foro/gestion-foro';
+import { Recursos } from './pages/recursos/recursos';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'landing', pathMatch: 'full' },
@@ -31,7 +33,6 @@ export const routes: Routes = [
   { path: 'dashboard-usuario', component: DashboardUsuario },
   { path: 'ofertas', component: OfertasComponent },
   { path: 'ofertas/:id', component: DetalleOferta },
-  { path: 'gestion-ofertas', component: GestionOfertas, canActivate: [authGuard, empresaGuard] },
   { path: 'perfil-empresa', component: PerfilEmpresa },
   { path: 'postulaciones', component: Postulaciones },
   { path: 'foro', component: Foro },
@@ -40,9 +41,11 @@ export const routes: Routes = [
   { path: 'moderacion', component: Moderacion },
   { path: 'ofertas', component: OfertasComponent },
   { path: 'ofertas/:id', component: DetalleOferta },
+  { path: 'gestion-ofertas', component: GestionOfertas, canActivate: [authGuard, empresaGuard] },
   { path: 'dashboard-usuario', component: DashboardUsuario, canActivate: [authGuard, candidatoGuard] },
   { path: 'postulaciones', component: Postulaciones, canActivate: [authGuard, candidatoGuard] },
   { path: 'perfil-usuario', component: PerfilUsuario, canActivate: [authGuard, candidatoGuard] },
+  { path: 'recursos', component: Recursos },
   { path: 'foro', component: Foro, canActivate: [authGuard] },
   { path: 'dashboard-empresa', component: DashboardEmpresa, canActivate: [authGuard, empresaGuard] },
   { path: 'perfil-empresa', component: PerfilEmpresa, canActivate: [authGuard, empresaGuard] },
@@ -51,6 +54,7 @@ export const routes: Routes = [
   { path: 'gestion-empresas', component: GestionEmpresas, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-vacantes', component: GestionVacantes, canActivate: [authGuard, adminGuard] },
   { path: 'moderacion', component: Moderacion, canActivate: [authGuard, adminGuard] },
+  { path: 'gestion-foro', component: GestionForo, canActivate: [authGuard, adminGuard] },
   { path: 'perfil-empresa-publico/:id', component: PerfilEmpresaPublico },
   { path: 'detalle-candidato', component: DetalleCandidato },
   { path: '**', redirectTo: 'login' }
