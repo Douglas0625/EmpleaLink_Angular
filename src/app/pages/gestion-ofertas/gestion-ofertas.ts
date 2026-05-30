@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
@@ -74,7 +74,8 @@ export class GestionOfertas implements OnInit {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
   ) {
     this.formOferta = this.fb.group({
       titulo:           ['', Validators.required],
@@ -227,6 +228,8 @@ export class GestionOfertas implements OnInit {
       // Recalcula stats y vista con los datos locales ya actualizados
       this.calcularStats();
       this.aplicarFiltros();
+      this.loading = false;
+      this.cdr.detectChanges();
 
       setTimeout(() => this.cerrarModal('modalOferta'), 700);
 
