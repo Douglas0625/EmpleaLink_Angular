@@ -28,6 +28,7 @@ export const routes: Routes = [
   { path: 'registro', component: Registro },
   { path: 'ofertas', component: OfertasComponent },
   { path: 'ofertas/:id', component: DetalleOferta },
+  { path: 'detalle-candidato/:userId/:applicationId/:jobPostId', component: DetalleCandidato, canActivate: [authGuard, empresaGuard] },
   { path: 'candidato/:applicationId/:jobPostId', component: DetalleCandidato, canActivate: [authGuard, empresaGuard] },
   { path: 'dashboard-usuario', component: DashboardUsuario, canActivate: [authGuard, candidatoGuard] },
   { path: 'postulaciones', component: Postulaciones, canActivate: [authGuard, candidatoGuard] },

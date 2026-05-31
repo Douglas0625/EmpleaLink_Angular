@@ -68,7 +68,52 @@ export class DetalleCandidato implements OnInit {
     this.route.params.subscribe((params) => {
       this.aplicacionId = params['applicationId'] || '1';
       this.jobPostId = params['jobPostId'] || '1';
-      this.cargarCandidato();
+      const userId = params['userId'] || null;
+      
+      // Si tenemos userId, cargar el perfil directamente
+      if (userId) {
+        console.log(`[DetalleCandidato] Loading profile directly with userId: ${userId}`);
+        this.cargarCandidatoPorUserId(userId);
+      } else {
+        // Fallback al flujo anterior
+        this.cargarCandidato();
+      }
+    });
+  }
+
+  /**
+   * Carga los datos del candidato directamente usando el userId
+   * Este es el flujo preferido cuando viene desde la gestión de ofertas
+   */
+  private cargarCandidatoPorUserId(userId: string): void {
+    this.cargando = true;
+    console.log(`[DetalleCandidato.cargarCandidatoPorUserId] Loading user profile directly for userId: ${userId}`);
+
+    this.usuarioService.getUserProfile(userId).subscribe({
+      next: (usuario) => {
+        console.log(`[DetalleCandidato.cargarCandidatoPorUserId] User profile received:`, usuario);
+        
+        if (!usuario) {
+          console.warn(`[DetalleCandidato.cargarCandidatoPorUserId] User profile is null`);
+          this.cargarCandidatoMock();
+          return;
+        }
+        
+        console.log(`[DetalleCandidato.cargarCandidatoPorUserId] Successfully mapped candidate from API data`);
+        // Crear un objeto de aplicación con datos mínimos
+        const aplicacionFake = {
+          id: this.aplicacionId,
+          user_id: userId
+        };
+        this.candidato = this.mapearCandidato(usuario, aplicacionFake);
+        this.cargando = false;
+        console.log(`[DetalleCandidato.cargarCandidatoPorUserId] Final candidate object:`, this.candidato);
+      },
+      error: (err) => {
+        console.error(`[DetalleCandidato.cargarCandidatoPorUserId] Error loading user profile for user ${userId}:`, err);
+        console.warn(`[DetalleCandidato.cargarCandidatoPorUserId] Loading mock data as fallback`);
+        this.cargarCandidatoMock();
+      }
     });
   }
 

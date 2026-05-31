@@ -389,6 +389,13 @@ export class GestionVacantesEmpresa implements OnInit {
       alert('No se puede acceder al perfil del candidato');
       return;
     }
-    this.router.navigate(['/detalle-candidato', candidato.applicationId, jobPostId]);
+    
+    // Si tenemos userId, navegar con él para optimizar la carga
+    if (candidato.userId) {
+      this.router.navigate(['/detalle-candidato', candidato.userId, candidato.applicationId, jobPostId]);
+    } else {
+      // Fallback a la ruta sin userId
+      this.router.navigate(['/candidato', candidato.applicationId, jobPostId]);
+    }
   }
 }
