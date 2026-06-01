@@ -126,9 +126,16 @@
           {{ getStatusLabel() }}
         </div>
 
-        <!-- Si no está postulado: mostrar botón -->
+        <!-- Si la oferta está cerrada y NO está postulado -->
+        <div *ngIf="!aplicado && oferta?.status_id !== 2"
+            class="alert alert-secondary text-center rounded-4 py-3 mt-3">
+          <i class="bi bi-lock me-2"></i>
+          Esta oferta está cerrada y ya no acepta postulaciones.
+        </div>
+
+        <!-- Si no está postulado Y la oferta está activa: mostrar botón -->
         <button
-          *ngIf="!aplicado"
+          *ngIf="!aplicado && oferta?.status_id === 2"
           class="btn-aplicar"
           [class.loading]="aplicando"
           [disabled]="aplicando"
@@ -136,6 +143,7 @@
           <span *ngIf="aplicando">Enviando...</span>
           <span *ngIf="!aplicando">Aplicar Ahora</span>
         </button>
+
         <p class="error-aplicar" *ngIf="errorAplicar">{{ errorAplicar }}</p>
       </div>
 

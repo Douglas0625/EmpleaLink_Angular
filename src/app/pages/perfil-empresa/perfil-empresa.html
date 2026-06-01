@@ -186,7 +186,7 @@
                   class="form-control pe-input"
                   [class.is-invalid]="isInvalid('email')"
                   formControlName="email"
-                  placeholder="contact@empresa.com"
+                  placeholder="contact@empresa.com" readonly
                 />
                 <div *ngIf="isInvalid('email')" class="invalid-feedback">Ingresa un correo válido.</div>
               </div>

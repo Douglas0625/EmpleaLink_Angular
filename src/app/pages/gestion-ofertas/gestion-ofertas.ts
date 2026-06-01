@@ -26,6 +26,7 @@ interface OfertaVista {
 
 interface CandidatoVista {
   applicationId: number;
+  userId: number;
   profileId: number;
   jobId: number;
   nombre: string;
@@ -344,6 +345,7 @@ export class GestionOfertas implements OnInit {
             const nombre = `${p?.first_name || ''} ${p?.last_name || ''}`.trim() || 'Candidato';
             return {
               applicationId: a.id,
+              userId: p?.user_id || 0,
               profileId: p?.id || 0,
               jobId:     o.id,
               nombre,

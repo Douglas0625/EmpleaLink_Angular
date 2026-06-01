@@ -47,7 +47,7 @@ export class OfertasComponent implements OnInit {
     }).subscribe({
       next: (res) => {
         // Mapear los job posts con sus respectivas empresas
-        this.ofertas = res.jobPosts.map(job => {
+        this.ofertas = res.jobPosts.filter((job: any) => Number(job.status_id) === 2).map(job => {
           const company = res.companies.find(c => c.id === job.company_profile_id) || {};
           
           // Generar iniciales si no hay logo

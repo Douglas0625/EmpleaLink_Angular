@@ -86,6 +86,7 @@ export class DetalleOferta implements OnInit {
 
         this.oferta = {
           id: job.id,
+          status_id: job.status_id,
           title: job.title || 'Puesto Desconocido',
           description: job.description || 'Sin descripción disponible.',
           location: job.location || 'No especificado',
@@ -115,6 +116,12 @@ export class DetalleOferta implements OnInit {
   }
 
   aplicar(): void {
+
+    // Bloquear si la oferta está cerrada (status_id 3) o pausada (status_id 1)
+    if (Number(this.oferta?.status_id) !== 2) {
+      this.errorAplicar = 'Esta oferta ya no está disponible para postulaciones.';
+      return;
+    }
     const sesion = this.authService.getSesion();
 
     if (!sesion) {

@@ -92,32 +92,55 @@ export class DetalleCandidato implements OnInit {
    */
   private cargarCandidatoPorUserId(userId: string): void {
     this.cargando = true;
+    const API = 'https://portal-empleo-api-production-481e.up.railway.app';
 
-    // Cargar perfil del usuario y experiencia, educación, habilidades
     forkJoin({
-      usuario: this.usuarioService.getUserProfile(userId),
-      perfil: this.http.get(`https://portal-empleo-api-production-481e.up.railway.app/profiles/${userId}`).pipe(
-        catchError(err => {
-          console.error('Error loading profile:', err);
-          return of(null);
-        })
-      ),
-      experiencia: this.http.get(`https://portal-empleo-api-production-481e.up.railway.app/profiles/${userId}/work-experiences`).pipe(
-        catchError(err => of([]))
-      ),
-      educacion: this.http.get(`https://portal-empleo-api-production-481e.up.railway.app/profiles/${userId}/educational-info`).pipe(
-        catchError(err => of([]))
-      ),
-      habilidades: this.http.get(`https://portal-empleo-api-production-481e.up.railway.app/profiles/${userId}/skills`).pipe(
-        catchError(err => of([]))
-      )
+      usuarios:     this.http.get<any>(`${API}/users`),
+      perfiles:     this.http.get<any>(`${API}/profiles`),
+      experiencias: this.http.get<any>(`${API}/work-experiences`),
+      educacion:    this.http.get<any>(`${API}/educational-info`),
+      profileSkills:this.http.get<any>(`${API}/profile-skills`),
+      skills:       this.http.get<any>(`${API}/skills`)
     }).subscribe({
       next: (datos: any) => {
-        this.candidato = this.mapearCandidatoOptimizado(datos.usuario, datos.perfil, datos.experiencia || [], datos.educacion || [], datos.habilidades || []);
+        const norm = (d: any) => Array.isArray(d) ? d : d?.data || [];
+
+        const usuarios      = norm(datos.usuarios);
+        const perfiles      = norm(datos.perfiles);
+        const experiencias  = norm(datos.experiencias);
+        const educacion     = norm(datos.educacion);
+        const profileSkills = norm(datos.profileSkills);
+        const skills        = norm(datos.skills);
+
+        // Buscar usuario y perfil por user_id
+        const usuario = usuarios.find((u: any) => Number(u.id) === Number(userId)) || null;
+        const perfil  = perfiles.find((p: any) => Number(p.user_id) === Number(userId)) || null;
+
+        if (!perfil) {
+          this.cargarCandidatoMock();
+          return;
+        }
+
+        // Filtrar experiencias y educación por profile_id
+        const misExp = experiencias.filter((e: any) => Number(e.profile_id) === Number(perfil.id));
+        const misEdu = educacion.filter((e: any) => Number(e.profile_id) === Number(perfil.id));
+
+        // Cruzar profile-skills con skills para obtener nombres reales
+        const misProfileSkills = profileSkills.filter((ps: any) => Number(ps.profile_id) === Number(perfil.id));
+        const misHabilidades = misProfileSkills
+          .map((ps: any) => {
+            const skill = skills.find((s: any) => Number(s.id) === Number(ps.skill_id));
+            return skill?.skill_name || null;
+          })
+          .filter(Boolean);
+
+        this.candidato = this.mapearCandidatoOptimizado(
+          usuario, perfil, misExp, misEdu, misHabilidades
+        );
         this.cargando = false;
       },
       error: (err) => {
-        console.error('Error loading candidate data:', err);
+        console.error('Error cargando candidato:', err);
         this.cargarCandidatoMock();
       }
     });
@@ -126,54 +149,46 @@ export class DetalleCandidato implements OnInit {
   /**
    * Mapea datos optimizados del candidato desde perfil y datos relacionados
    */
-  private mapearCandidatoOptimizado(usuario: any, perfil: any, experiencia: any[], educacion: any[], habilidades: any[]): Candidato {
-    const exp = (experiencia || []).map((e: any) => ({
-      id: e.id || '1',
-      title: e.position_title || e.title || 'Posición',
+  private mapearCandidatoOptimizado(
+    usuario: any, perfil: any,
+    experiencia: any[], educacion: any[], habilidades: string[]
+  ): Candidato {
+
+    const exp = experiencia.map((e: any) => ({
+      id: String(e.id || '1'),
+      title: e.job_title || e.position_title || e.title || 'Posición',
       company: e.company_name || e.company || 'Empresa',
-      startDate: e.start_date || e.startDate || '',
-      endDate: e.end_date || e.endDate,
-      description: e.description || e.job_description || '',
-      isCurrent: !e.end_date || e.is_current === true
+      startDate: e.start_date || '',
+      endDate: e.end_date,
+      description: e.description || '',
+      isCurrent: !!e.is_current || !e.end_date
     }));
 
-    const edu = (educacion || []).map((e: any) => ({
-      id: e.id || '1',
-      title: e.degree_name || e.title || 'Grado',
-      institution: e.institution_name || e.institution || 'Institución',
-      startDate: e.start_date || e.startDate || '',
-      endDate: e.end_date || e.endDate || ''
+    const edu = educacion.map((e: any) => ({
+      id: String(e.id || '1'),
+      title: e.custom_degree_name || e.degree_name || e.title || 'Grado',
+      institution: e.institution || 'Institución',
+      startDate: e.start_date || '',
+      endDate: e.end_date || ''
     }));
 
-    const habs = (habilidades || []).map((h: any) => h.skill_name || h.name || h.title || 'Habilidad');
+    const nombre = `${perfil?.first_name || ''} ${perfil?.last_name || ''}`.trim() || 'Candidato';
 
     return {
-      id: usuario?.id || perfil?.id || '1',
-      name: usuario?.name || `${perfil?.first_name || ''} ${perfil?.last_name || ''}`.trim() || 'Candidato',
-      email: usuario?.email || perfil?.email || 'email@ejemplo.com',
-      phone: usuario?.phone || perfil?.phone || '+34 987 345 078',
-      title: usuario?.professional_title || perfil?.professional_title || 'Profesional',
-      location: usuario?.location || perfil?.location || 'Ubicación no definida',
-      workMode: usuario?.work_preference || perfil?.work_preference || 'Remote / Híbrido',
-      avatar: usuario?.profile_image_url || perfil?.profile_image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(usuario?.name || 'Usuario')}&background=5b6df6&color=fff&size=150`,
-      profesionalProfile: usuario?.professional_summary || perfil?.professional_summary || 'Profesional con experiencia.',
-      experiencia: exp.length > 0 ? exp : [{
-        id: '1',
-        title: 'Profesional Experimentado',
-        company: 'En el campo',
-        startDate: '2020',
-        description: 'Trabajador en diferentes empresas',
-        isCurrent: true
-      }],
-      educacion: edu.length > 0 ? edu : [{
-        id: '1',
-        title: 'Formación Profesional',
-        institution: 'Institución Educativa',
-        startDate: '2015',
-        endDate: '2020'
-      }],
-      habilidades: habs.length > 0 ? habs : ['Experiencia', 'Profesionalismo', 'Comunicación'],
-      cv: usuario?.cv_url || perfil?.cv_url || '#'
+      id: String(usuario?.id || perfil?.id || '1'),
+      name: nombre,
+      email: usuario?.email || 'Sin correo',   // <-- viene del usuario, no del perfil
+      phone: perfil?.phone || 'Sin teléfono',
+      title: perfil?.professional_title || 'Profesional',
+      location: perfil?.location || 'Ubicación no definida',
+      workMode: 'No especificado',
+      avatar: perfil?.profile_image_url ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(nombre)}&background=5b6df6&color=fff&size=150`,
+      profesionalProfile: perfil?.about_me || 'Profesional con experiencia.',
+      experiencia: exp.length > 0 ? exp : [],
+      educacion: edu.length > 0 ? edu : [],
+      habilidades: habilidades.length > 0 ? habilidades : [],  // <-- ya son strings
+      cv: perfil?.cv_url || '#'
     };
   }
 
@@ -397,16 +412,7 @@ export class DetalleCandidato implements OnInit {
     const API = 'https://portal-empleo-api-production-481e.up.railway.app';
 
     try {
-      // Obtener la aplicación completa para hacer un PUT con todos los campos
-      const appRes = await fetch(`${API}/applications/${this.aplicacionId}`);
-      let appData: any = {};
-      if (appRes.ok) {
-        appData = await appRes.json();
-      }
-
-      const payload = { ...appData, application_status: estado };
-
-      // Intentar PATCH primero, luego PUT como fallback
+      // 1. Actualizar estado de esta aplicación
       const patchRes = await fetch(`${API}/applications/${this.aplicacionId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -414,15 +420,17 @@ export class DetalleCandidato implements OnInit {
       });
 
       if (!patchRes.ok) {
+        const appRes = await fetch(`${API}/applications/${this.aplicacionId}`);
+        const appData = appRes.ok ? await appRes.json() : {};
         const putRes = await fetch(`${API}/applications/${this.aplicacionId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ ...appData, application_status: estado })
         });
         if (!putRes.ok) throw new Error(`Error HTTP ${putRes.status}`);
       }
 
-      // Si se aceptó y se llegó al límite → cerrar la oferta automáticamente
+      // 2. Si se aceptó y se llegó al límite → cerrar oferta + rechazar pendientes
       if (
         estado === 'accepted' &&
         oferta?.id &&
@@ -430,11 +438,12 @@ export class DetalleCandidato implements OnInit {
         nuevosAceptados !== undefined &&
         nuevosAceptados >= maxCandidatos
       ) {
+        // 2a. Cerrar la oferta en la API (status_id: 3)
         const payloadCierre = { ...oferta, status_id: 3 };
         const closePatch = await fetch(`${API}/job-posts/${oferta.id}`, {
-          method: 'PATCH',
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payloadCierre)
+          body: JSON.stringify({ status_id: 3 })
         });
         if (!closePatch.ok) {
           await fetch(`${API}/job-posts/${oferta.id}`, {
@@ -443,13 +452,54 @@ export class DetalleCandidato implements OnInit {
             body: JSON.stringify(payloadCierre)
           });
         }
+
+        // 2b. Obtener todas las aplicaciones pendientes de esta oferta y rechazarlas
+        const appsRes = await fetch(`${API}/applications`);
+        if (appsRes.ok) {
+          const appsData = await appsRes.json();
+          const todasApps: any[] = Array.isArray(appsData) ? appsData : (appsData?.data ?? []);
+
+          const pendientes = todasApps.filter((a: any) =>
+            Number(a.job_post_id) === Number(oferta.id) &&
+            String(a.id) !== String(this.aplicacionId) && // no la que acabamos de aceptar
+            ['submitted', 'reviewed', 'pending', ''].includes(
+              (a.application_status || '').toLowerCase()
+            )
+          );
+
+          // Rechazar todas en paralelo
+          await Promise.all(
+            pendientes.map((a: any) =>
+              fetch(`${API}/applications/${a.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ application_status: 'rejected' })
+              }).then(res => {
+                if (!res.ok) {
+                  return fetch(`${API}/applications/${a.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...a, application_status: 'rejected' })
+                  });
+                }
+                return res; // <-- agregar este return
+              }).catch(err => console.error(`Error rechazando app ${a.id}:`, err))
+            )
+          );
+
+          alert(`Candidato aceptado. Se alcanzó el cupo máximo (${maxCandidatos}). La oferta fue cerrada y ${pendientes.length} candidato(s) pendiente(s) fueron rechazados automáticamente.`);
+        } else {
+          alert('Candidato aceptado. La oferta fue cerrada automáticamente.');
+        }
+
+      } else {
+        alert(
+          this.tipoAccion === 'aceptar'
+            ? 'Candidato aceptado exitosamente'
+            : 'Candidato rechazado'
+        );
       }
 
-      alert(
-        this.tipoAccion === 'aceptar'
-          ? 'Candidato aceptado exitosamente'
-          : 'Candidato rechazado'
-      );
       this.mostrarConfirmacion = false;
       this.guardando = false;
       this.volverAtras();
