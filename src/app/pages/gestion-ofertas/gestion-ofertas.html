@@ -159,8 +159,7 @@
                     <small class="text-secondary">{{ c.titulo }}</small>
                   </div>
                 </div>
-                <a [routerLink]="['/detalle-candidato']"
-                  [queryParams]="{ id: c.profileId, jobId: c.jobId }"
+                <a [routerLink]="['/detalle-candidato', c.profileId, c.applicationId, c.jobId]"
                   class="fw-bold text-decoration-none" style="color:#554DEF;font-size:13px;">
                   Ver perfil
                 </a>
