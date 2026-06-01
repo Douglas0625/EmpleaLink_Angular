@@ -55,7 +55,6 @@ export const routes: Routes = [
   { path: 'gestion-vacantes', component: GestionVacantes, canActivate: [authGuard, adminGuard] },
   { path: 'moderacion', component: Moderacion, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-foro', component: GestionForo, canActivate: [authGuard, adminGuard] },
-  { path: 'perfil-empresa-publico/:id', component: PerfilEmpresaPublico },
-  { path: 'detalle-candidato', component: DetalleCandidato },
+  { path: 'perfil-empresa-publico/:id', component: PerfilEmpresaPublico },  { path: 'detalle-candidato/:userId/:applicationId/:jobPostId', component: DetalleCandidato },  { path: 'detalle-candidato', component: DetalleCandidato },
   { path: '**', redirectTo: 'login' }
 ];

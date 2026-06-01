@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { PostulacionesService } from '../../services/postulaciones';
 import { UsuarioService } from '../../services/usuario';
 
@@ -60,16 +63,118 @@ export class DetalleCandidato implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private http: HttpClient,
     private postulacionesService: PostulacionesService,
     private usuarioService: UsuarioService
   ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.aplicacionId = params['applicationId'] || '1';
-      this.jobPostId = params['jobPostId'] || '1';
-      this.cargarCandidato();
+      const userId = params['userId'];
+      const applicationId = params['applicationId'];
+      const jobPostId = params['jobPostId'];
+
+      this.aplicacionId = applicationId || '1';
+      this.jobPostId = jobPostId || '1';
+
+      // Si tenemos userId, cargar directamente por usuario (más eficiente)
+      if (userId) {
+        this.cargarCandidatoPorUserId(userId);
+      } else {
+        // Fallback: obtener userId de la aplicación
+        this.cargarCandidato();
+      }
     });
+  }
+
+  /**
+   * Carga los datos del candidato por userId (método optimizado)
+   */
+  private cargarCandidatoPorUserId(userId: string): void {
+    this.cargando = true;
+
+    // Cargar perfil del usuario y experiencia, educación, habilidades
+    forkJoin({
+      usuario: this.usuarioService.getUserProfile(userId),
+      perfil: this.http.get(`https://portal-empleo-api-production-481e.up.railway.app/profiles/${userId}`).pipe(
+        catchError(err => {
+          console.error('Error loading profile:', err);
+          return of(null);
+        })
+      ),
+      experiencia: this.http.get(`https://portal-empleo-api-production-481e.up.railway.app/profiles/${userId}/work-experiences`).pipe(
+        catchError(err => of([]))
+      ),
+      educacion: this.http.get(`https://portal-empleo-api-production-481e.up.railway.app/profiles/${userId}/educational-info`).pipe(
+        catchError(err => of([]))
+      ),
+      habilidades: this.http.get(`https://portal-empleo-api-production-481e.up.railway.app/profiles/${userId}/skills`).pipe(
+        catchError(err => of([]))
+      )
+    }).subscribe({
+      next: (datos: any) => {
+        this.candidato = this.mapearCandidatoOptimizado(datos.usuario, datos.perfil, datos.experiencia || [], datos.educacion || [], datos.habilidades || []);
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error('Error loading candidate data:', err);
+        this.cargarCandidatoMock();
+      }
+    });
+  }
+
+  /**
+   * Mapea datos optimizados del candidato desde perfil y datos relacionados
+   */
+  private mapearCandidatoOptimizado(usuario: any, perfil: any, experiencia: any[], educacion: any[], habilidades: any[]): Candidato {
+    const exp = (experiencia || []).map((e: any) => ({
+      id: e.id || '1',
+      title: e.position_title || e.title || 'Posición',
+      company: e.company_name || e.company || 'Empresa',
+      startDate: e.start_date || e.startDate || '',
+      endDate: e.end_date || e.endDate,
+      description: e.description || e.job_description || '',
+      isCurrent: !e.end_date || e.is_current === true
+    }));
+
+    const edu = (educacion || []).map((e: any) => ({
+      id: e.id || '1',
+      title: e.degree_name || e.title || 'Grado',
+      institution: e.institution_name || e.institution || 'Institución',
+      startDate: e.start_date || e.startDate || '',
+      endDate: e.end_date || e.endDate || ''
+    }));
+
+    const habs = (habilidades || []).map((h: any) => h.skill_name || h.name || h.title || 'Habilidad');
+
+    return {
+      id: usuario?.id || perfil?.id || '1',
+      name: usuario?.name || `${perfil?.first_name || ''} ${perfil?.last_name || ''}`.trim() || 'Candidato',
+      email: usuario?.email || perfil?.email || 'email@ejemplo.com',
+      phone: usuario?.phone || perfil?.phone || '+34 987 345 078',
+      title: usuario?.professional_title || perfil?.professional_title || 'Profesional',
+      location: usuario?.location || perfil?.location || 'Ubicación no definida',
+      workMode: usuario?.work_preference || perfil?.work_preference || 'Remote / Híbrido',
+      avatar: usuario?.profile_image_url || perfil?.profile_image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(usuario?.name || 'Usuario')}&background=5b6df6&color=fff&size=150`,
+      profesionalProfile: usuario?.professional_summary || perfil?.professional_summary || 'Profesional con experiencia.',
+      experiencia: exp.length > 0 ? exp : [{
+        id: '1',
+        title: 'Profesional Experimentado',
+        company: 'En el campo',
+        startDate: '2020',
+        description: 'Trabajador en diferentes empresas',
+        isCurrent: true
+      }],
+      educacion: edu.length > 0 ? edu : [{
+        id: '1',
+        title: 'Formación Profesional',
+        institution: 'Institución Educativa',
+        startDate: '2015',
+        endDate: '2020'
+      }],
+      habilidades: habs.length > 0 ? habs : ['Experiencia', 'Profesionalismo', 'Comunicación'],
+      cv: usuario?.cv_url || perfil?.cv_url || '#'
+    };
   }
 
   /**

@@ -23,6 +23,7 @@ interface OfertaVista {
 }
 
 interface CandidatoVista {
+  applicationId: number;
   profileId: number;
   jobId: number;
   nombre: string;
@@ -318,6 +319,7 @@ export class GestionOfertas implements OnInit {
             const p = this.perfilesGlobales.find((pf: any) => Number(pf.id) === Number(a.profile_id));
             const nombre = `${p?.first_name || ''} ${p?.last_name || ''}`.trim() || 'Candidato';
             return {
+              applicationId: a.id,
               profileId: p?.id || 0,
               jobId:     o.id,
               nombre,
