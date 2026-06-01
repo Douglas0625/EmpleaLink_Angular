@@ -327,24 +327,139 @@ export class DetalleCandidato implements OnInit {
     this.guardando = true;
     const estado = this.tipoAccion === 'aceptar' ? 'accepted' : 'rejected';
 
-    this.postulacionesService.updateApplicationStatus(this.aplicacionId, estado).subscribe({
-      next: () => {
-        alert(
-          this.tipoAccion === 'aceptar'
-            ? 'Candidato aceptado exitosamente'
-            : 'Candidato rechazado'
-        );
-        this.mostrarConfirmacion = false;
-        this.guardando = false;
-        this.volverAtras();
+    // Si la acción es aceptar, validar límite antes de proceder
+    if (estado === 'accepted') {
+      this.validarLimiteYAceptar();
+    } else {
+      this.ejecutarCambioEstado(estado);
+    }
+  }
+
+  /**
+   * Valida el límite de candidatos y ejecuta la aceptación si hay cupo
+   */
+  private validarLimiteYAceptar(): void {
+    const API = 'https://portal-empleo-api-production-481e.up.railway.app';
+
+    // Obtener la oferta para conocer max_candidates
+    this.http.get<any>(`${API}/job-posts/${this.jobPostId}`).subscribe({
+      next: (oferta) => {
+        const maxCandidatos = oferta?.max_candidates ? Number(oferta.max_candidates) : null;
+
+        // Sin límite definido: aceptar directamente
+        if (!maxCandidatos) {
+          this.ejecutarCambioEstado('accepted');
+          return;
+        }
+
+        // Contar candidatos ya aceptados para esta oferta
+        this.http.get<any[]>(`${API}/applications`).subscribe({
+          next: (apps: any) => {
+            const lista: any[] = Array.isArray(apps) ? apps : (apps?.data ?? []);
+            const aceptados = lista.filter((a: any) =>
+              Number(a.job_post_id) === Number(this.jobPostId) &&
+              (a.application_status || '').toLowerCase() === 'accepted'
+            ).length;
+
+            if (aceptados >= maxCandidatos) {
+              // Límite alcanzado: bloquear acción
+              alert('Ya se alcanzó el número máximo de candidatos para esta oferta.');
+              this.mostrarConfirmacion = false;
+              this.guardando = false;
+              return;
+            }
+
+            // Hay cupo: aceptar y verificar si se debe cerrar la oferta
+            this.ejecutarCambioEstado('accepted', oferta, aceptados + 1, maxCandidatos);
+          },
+          error: () => {
+            // Si falla la consulta, aceptar sin bloquear (fail-open)
+            this.ejecutarCambioEstado('accepted');
+          }
+        });
       },
-      error: (err) => {
-        console.error('Error updating application:', err);
-        alert('Error al procesar la solicitud');
-        this.mostrarConfirmacion = false;
-        this.guardando = false;
+      error: () => {
+        // Si no se puede obtener la oferta, aceptar sin bloquear
+        this.ejecutarCambioEstado('accepted');
       }
     });
+  }
+
+  /**
+   * Ejecuta el cambio de estado y opcionalmente cierra la oferta si se llenó el cupo
+   */
+  private async ejecutarCambioEstado(
+    estado: string,
+    oferta?: any,
+    nuevosAceptados?: number,
+    maxCandidatos?: number
+  ): Promise<void> {
+    const API = 'https://portal-empleo-api-production-481e.up.railway.app';
+
+    try {
+      // Obtener la aplicación completa para hacer un PUT con todos los campos
+      const appRes = await fetch(`${API}/applications/${this.aplicacionId}`);
+      let appData: any = {};
+      if (appRes.ok) {
+        appData = await appRes.json();
+      }
+
+      const payload = { ...appData, application_status: estado };
+
+      // Intentar PATCH primero, luego PUT como fallback
+      const patchRes = await fetch(`${API}/applications/${this.aplicacionId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ application_status: estado })
+      });
+
+      if (!patchRes.ok) {
+        const putRes = await fetch(`${API}/applications/${this.aplicacionId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!putRes.ok) throw new Error(`Error HTTP ${putRes.status}`);
+      }
+
+      // Si se aceptó y se llegó al límite → cerrar la oferta automáticamente
+      if (
+        estado === 'accepted' &&
+        oferta?.id &&
+        maxCandidatos !== undefined &&
+        nuevosAceptados !== undefined &&
+        nuevosAceptados >= maxCandidatos
+      ) {
+        const payloadCierre = { ...oferta, status_id: 3 };
+        const closePatch = await fetch(`${API}/job-posts/${oferta.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payloadCierre)
+        });
+        if (!closePatch.ok) {
+          await fetch(`${API}/job-posts/${oferta.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payloadCierre)
+          });
+        }
+      }
+
+      alert(
+        this.tipoAccion === 'aceptar'
+          ? 'Candidato aceptado exitosamente'
+          : 'Candidato rechazado'
+      );
+      this.mostrarConfirmacion = false;
+      this.guardando = false;
+      this.volverAtras();
+
+    } catch (err) {
+      console.error('Error actualizando candidato:', err);
+      alert('Error al procesar la solicitud');
+      this.mostrarConfirmacion = false;
+      this.guardando = false;
+    }
   }
 
   /**
@@ -370,7 +485,7 @@ export class DetalleCandidato implements OnInit {
    * Volver a la vista anterior
    */
   volverAtras(): void {
-    this.router.navigate(['/gestion-vacantes']);
+    this.router.navigate(['/gestion-ofertas']);
   }
 
   /**

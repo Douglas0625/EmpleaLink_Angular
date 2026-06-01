@@ -20,6 +20,8 @@ interface OfertaVista {
   statusId: number;
   candidatos: CandidatoVista[];
   totalPostulantes: number;
+  maxCandidatos: number | null;
+  aceptados: number;
 }
 
 interface CandidatoVista {
@@ -60,7 +62,7 @@ export class GestionOfertas implements OnInit {
 
   // Filtros
   filtroPuesto = '';
-  filtroEstado = '2';
+  filtroEstado = '';
 
   // Modal
   modalTitulo    = 'Crear una nueva oferta';
@@ -88,7 +90,8 @@ export class GestionOfertas implements OnInit {
       descripcion:      ['', Validators.required],
       responsabilidades:[''],
       requisitos:       [''],
-      estado:           ['2']
+      estado:           ['2'],
+      maxCandidatos:    [null]
     });
   }
 
@@ -122,7 +125,7 @@ export class GestionOfertas implements OnInit {
 
   limpiarFiltros(): void {
     this.filtroPuesto = '';
-    this.filtroEstado = '2';
+    this.filtroEstado = '';
     this.aplicarFiltros();
   }
 
@@ -136,7 +139,8 @@ export class GestionOfertas implements OnInit {
       experiencia: '1 año',
       modalidad:   'remote',
       tipo:        'full_time',
-      estado:      '2'
+      estado:      '2',
+      maxCandidatos: null
     });
     this.abrirModal('modalOferta');
   }
@@ -159,7 +163,8 @@ export class GestionOfertas implements OnInit {
       descripcion:       this.extraerDescPrincipal(oferta.description),
       responsabilidades: this.extraerBloque(oferta.description, 'Responsabilidades:'),
       requisitos:        this.extraerBloque(oferta.description, 'Requisitos:'),
-      estado:            String(oferta.status_id || 2)
+      estado:            String(oferta.status_id || 2),
+      maxCandidatos:     oferta.max_candidates ?? null
     });
 
     this.abrirModal('modalOferta');
@@ -196,7 +201,8 @@ export class GestionOfertas implements OnInit {
       experience_required_timelapse_id: this.textoAIdExperiencia(v.experiencia),
       min_salary:         Number(v.salarioMin),
       max_salary:         Number(v.salarioMax),
-      status_id:          Number(v.estado)
+      status_id:          Number(v.estado),
+      max_candidates:     v.maxCandidatos ? Number(v.maxCandidatos) : null
     };
 
     this.guardando = true;
@@ -302,7 +308,23 @@ export class GestionOfertas implements OnInit {
           .sort((a, b) => new Date(b.application_date || 0).getTime() - new Date(a.application_date || 0).getTime())
           .slice(0, 4);
 
-        const estado = this.mapEstado(o.status_id);
+        const aceptados = apps.filter((a: any) =>
+          (a.application_status || '').toLowerCase() === 'accepted'
+        ).length;
+
+        const maxCandidatos = o.max_candidates ? Number(o.max_candidates) : null;
+
+        // Si el cupo ya está lleno, tratar como cerrada (aunque la API aún no se haya actualizado)
+        const statusIdEfectivo = (maxCandidatos && aceptados >= maxCandidatos)
+          ? 3
+          : Number(o.status_id);
+
+        const estado = this.mapEstado(statusIdEfectivo);
+
+        // Sincronizar en memoria si la API aún muestra activa pero el cupo está lleno
+        if (statusIdEfectivo === 3 && Number(o.status_id) !== 3) {
+          o.status_id = 3;
+        }
 
         return {
           id:              o.id,
@@ -313,8 +335,10 @@ export class GestionOfertas implements OnInit {
           estadoTexto:     estado.texto,
           estadoColor:     estado.color,
           descripcion:     this.recortar(this.extraerDescPrincipal(o.description), 180),
-          statusId:        Number(o.status_id),
+          statusId:        statusIdEfectivo,
           totalPostulantes: apps.length,
+          maxCandidatos,
+          aceptados,
           candidatos: recientes.map((a: any) => {
             const p = this.perfilesGlobales.find((pf: any) => Number(pf.id) === Number(a.profile_id));
             const nombre = `${p?.first_name || ''} ${p?.last_name || ''}`.trim() || 'Candidato';

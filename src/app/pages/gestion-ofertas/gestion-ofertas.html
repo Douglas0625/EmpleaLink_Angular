@@ -181,6 +181,30 @@
             total{{ oferta.totalPostulantes === 1 ? '' : 'es' }} esperando revisión
           </small>
         </div>
+
+        <!-- Progreso de candidatos aceptados -->
+        <div *ngIf="oferta.maxCandidatos" class="mt-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <small class="fw-semibold fuente-inter" style="color:#554DEF;">
+              <i class="bi bi-person-check me-1"></i>Candidatos seleccionados
+            </small>
+            <small class="fw-bold fuente-inter"
+              [class.text-danger]="oferta.aceptados >= oferta.maxCandidatos"
+              [class.text-success]="oferta.aceptados < oferta.maxCandidatos">
+              {{ oferta.aceptados }} / {{ oferta.maxCandidatos }}
+            </small>
+          </div>
+          <div class="progress rounded-pill" style="height:6px;">
+            <div class="progress-bar"
+              [style.width.%]="(oferta.aceptados / oferta.maxCandidatos) * 100"
+              [style.background-color]="oferta.aceptados >= oferta.maxCandidatos ? '#EF4444' : '#554DEF'">
+            </div>
+          </div>
+          <small *ngIf="oferta.aceptados >= oferta.maxCandidatos"
+            class="text-danger fw-semibold fuente-inter d-block mt-1">
+            <i class="bi bi-lock-fill me-1"></i>Cupo completo — oferta cerrada automáticamente
+          </small>
+        </div>
       </div>
 
       <!-- Separador + botón editar -->
@@ -307,6 +331,18 @@
               <textarea class="form-control rounded-4 textarea-oferta"
                 formControlName="requisitos"
                 placeholder="Especifica los requisitos necesarios..."></textarea>
+            </div>
+
+            <!-- Máximo de candidatos -->
+            <div class="col-md-6">
+              <label class="texto-etiqueta mb-1">Máximo de candidatos a aceptar</label>
+              <input type="number" class="form-control rounded-4" min="1"
+                formControlName="maxCandidatos"
+                placeholder="Ej. 3  (dejar vacío = sin límite)">
+              <small class="text-secondary">
+                <i class="bi bi-info-circle me-1"></i>
+                Al alcanzar este número, la oferta se cerrará automáticamente.
+              </small>
             </div>
           </div>
 
