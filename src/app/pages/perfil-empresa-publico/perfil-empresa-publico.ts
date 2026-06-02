@@ -88,7 +88,14 @@ export class PerfilEmpresaPublico implements OnInit {
 
         this.info = listaInfo.find(
           (i: any) => Number(i.id) === Number(this.empresa.additional_info_id)
-        );
+        ) ?? null;
+
+        // Fallback: algunos registros relacionan por company_profile_id en lugar de additional_info_id
+        if (!this.info) {
+          this.info = listaInfo.find(
+            (i: any) => Number(i.company_profile_id) === Number(this.empresa.id)
+          ) ?? null;
+        }
 
         this.ofertas = listaOfertas.filter(
           (o: any) => Number(o.company_profile_id) === Number(this.empresa.id)
@@ -123,21 +130,17 @@ export class PerfilEmpresaPublico implements OnInit {
   }
 
   getIndustria(id: number): string {
-
     const item = this.industrias.find(
       (i: any) => Number(i.id) === Number(id)
     );
-
-    return item?.industry_name || 'Industria';
+    return item?.industry_name || item?.name || item?.nombre || 'Industria';
   }
 
   getTamano(id: number): string {
-
     const item = this.tamanos.find(
       (i: any) => Number(i.id) === Number(id)
     );
-
-    return item?.company_size_name || 'Empresa';
+    return item?.company_size_name || item?.company_size || item?.size_name || item?.name || '';
   }
 
   getIniciales(nombre: string): string {

@@ -25,36 +25,33 @@ import { GestionForo } from './pages/gestion-foro/gestion-foro';
 import { Recursos } from './pages/recursos/recursos';
 
 export const routes: Routes = [
+
   { path: '', redirectTo: 'landing', pathMatch: 'full' },
+
   { path: 'landing', component: LandingComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard-admin', component: DashboardAdmin },
-  { path: 'dashboard-empresa', component: DashboardEmpresa },
-  { path: 'dashboard-usuario', component: DashboardUsuario },
   { path: 'ofertas', component: OfertasComponent },
   { path: 'ofertas/:id', component: DetalleOferta },
-  { path: 'perfil-empresa', component: PerfilEmpresa },
-  { path: 'postulaciones', component: Postulaciones },
-  { path: 'foro', component: Foro },
-  { path: 'gestion-usuarios', component: GestionUsuarios },
-  { path: 'gestion-empresas', component: GestionEmpresas },
-  { path: 'moderacion', component: Moderacion },
-  { path: 'ofertas', component: OfertasComponent },
-  { path: 'ofertas/:id', component: DetalleOferta },
-  { path: 'gestion-ofertas', component: GestionOfertas, canActivate: [authGuard, empresaGuard] },
+  { path: 'perfil-empresa-publico/:id', component: PerfilEmpresaPublico },
+  { path: 'recursos', component: Recursos },
+
   { path: 'dashboard-usuario', component: DashboardUsuario, canActivate: [authGuard, candidatoGuard] },
   { path: 'postulaciones', component: Postulaciones, canActivate: [authGuard, candidatoGuard] },
   { path: 'perfil-usuario', component: PerfilUsuario, canActivate: [authGuard, candidatoGuard] },
-  { path: 'recursos', component: Recursos },
   { path: 'foro', component: Foro, canActivate: [authGuard] },
+
+
   { path: 'dashboard-empresa', component: DashboardEmpresa, canActivate: [authGuard, empresaGuard] },
   { path: 'perfil-empresa', component: PerfilEmpresa, canActivate: [authGuard, empresaGuard] },
+  { path: 'gestion-ofertas', component: GestionOfertas, canActivate: [authGuard, empresaGuard] },
+  { path: 'detalle-candidato/:userId/:applicationId/:jobPostId', component: DetalleCandidato, canActivate: [authGuard, empresaGuard] },
+
   { path: 'dashboard-admin', component: DashboardAdmin, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-usuarios', component: GestionUsuarios, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-empresas', component: GestionEmpresas, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-vacantes', component: GestionVacantes, canActivate: [authGuard, adminGuard] },
   { path: 'moderacion', component: Moderacion, canActivate: [authGuard, adminGuard] },
   { path: 'gestion-foro', component: GestionForo, canActivate: [authGuard, adminGuard] },
-  { path: 'perfil-empresa-publico/:id', component: PerfilEmpresaPublico },  { path: 'detalle-candidato/:userId/:applicationId/:jobPostId', component: DetalleCandidato },  { path: 'detalle-candidato', component: DetalleCandidato },
+
   { path: '**', redirectTo: 'login' }
 ];
