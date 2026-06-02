@@ -11,9 +11,6 @@ export class EmpresaService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Obtiene el perfil de la empresa del usuario autenticado
-   */
   getCompanyProfile(userId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/users/${userId}/company-profile`)
       .pipe(
@@ -24,9 +21,6 @@ export class EmpresaService {
       );
   }
 
-  /**
-   * Obtiene todas las ofertas de una empresa
-   */
   getJobPostsByCompany(companyId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/companies/${companyId}/job-posts`)
       .pipe(
@@ -37,9 +31,7 @@ export class EmpresaService {
       );
   }
 
-  /**
-   * Obtiene estadísticas de las ofertas de la empresa
-   */
+  
   getJobPostStats(companyId: string): Observable<any> {
     return this.http.get<any[]>(`${this.apiUrl}/companies/${companyId}/job-posts`)
       .pipe(
@@ -67,9 +59,7 @@ export class EmpresaService {
       );
   }
 
-  /**
-   * Obtiene las aplicaciones para las ofertas de una empresa
-   */
+  
   getApplicationsByCompany(jobPostId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/job-posts/${jobPostId}/applications`)
       .pipe(
@@ -80,9 +70,7 @@ export class EmpresaService {
       );
   }
 
-  /**
-   * Actualiza el perfil de la empresa
-   */
+
   updateCompanyProfile(userId: string, profileData: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/users/${userId}/company-profile`, profileData)
       .pipe(

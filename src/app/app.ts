@@ -19,13 +19,12 @@ export class App {
   private rutasSinLayout = ['/login', '/registro'];
 
   constructor(private router: Router) {
-    // Verificar la ruta actual al arrancar
+
     const urlActual = this.router.url;
     const mostrarInicial = !this.rutasSinLayout.some(r => urlActual.startsWith(r));
     this.mostrarNavbar = mostrarInicial;
     this.mostrarFooter = mostrarInicial;
 
-    // Actualizar en cada navegación
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: any) => {
