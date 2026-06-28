@@ -76,13 +76,14 @@ Actualmente el repositorio contiene únicamente el frontend Angular. Algunas fun
 
 ## 📷 Capturas del Sistema
 
+### Landing Page
+
+![Landing Page](screenshots/landing.png)
+
 ### Inicio de Sesión
 
 ![Inicio de Sesión](screenshots/login.png)
 
-### Página Principal
-
-![Página Principal](screenshots/landing.png)
 
 > Actualmente las capturas de módulos internos no se encuentran disponibles debido a que requieren la ejecución conjunta del frontend y la API backend. Serán agregadas en futuras actualizaciones del repositorio.
 
